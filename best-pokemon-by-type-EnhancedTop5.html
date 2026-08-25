@@ -1,0 +1,1388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Best Pokémon Per Type — Pokémon GO</title>
+<style>
+  :root {
+    --bg: #0e0f14;
+    --card-bg: #181a22;
+    --text: #f2f0e8;
+    --sub: #9a9aa8;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: radial-gradient(circle at top, #1a1c26 0%, #0e0f14 60%);
+    color: var(--text);
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    padding: 24px 14px 60px;
+  }
+  header { text-align: center; margin-bottom: 18px; }
+  header .eyebrow {
+    letter-spacing: 3px;
+    font-size: 11px;
+    color: var(--sub);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  header h1 {
+    font-size: 25px;
+    margin: 0 0 6px;
+    background: linear-gradient(90deg, #ffcb05, #3d7dca);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    font-weight: 800;
+  }
+  header p {
+    color: var(--sub);
+    font-size: 13px;
+    max-width: 480px;
+    margin: 0 auto;
+    line-height: 1.5;
+  }
+  .tabs {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    max-width: 700px;
+    margin: 20px auto 24px;
+    flex-wrap: wrap;
+  }
+  .tab-btn {
+    background: #181a22;
+    color: var(--sub);
+    border: 1px solid rgba(255,255,255,0.08);
+    padding: 9px 16px;
+    border-radius: 22px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all .15s ease;
+  }
+  .tab-btn.active {
+    background: linear-gradient(90deg, #ffcb05, #f0a020);
+    color: #1a1200;
+    border-color: transparent;
+  }
+  .panel { display: none; }
+  .panel.active { display: block; }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+    gap: 12px;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+  .card {
+    background: var(--card-bg);
+    border-radius: 16px;
+    padding: 14px;
+    border: 1px solid rgba(255,255,255,0.06);
+    position: relative;
+    overflow: hidden;
+    transition: transform .15s ease;
+  }
+  .card:active { transform: scale(0.97); }
+  .card::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+    background: var(--tcolor);
+  }
+  .type-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--tcolor);
+    color: rgba(0,0,0,0.75);
+    font-weight: 700;
+    font-size: 12px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    margin-bottom: 10px;
+    text-shadow: none;
+  }
+  .icon { font-size: 15px; }
+  .ranklist { list-style: none; margin: 0; padding: 0; }
+  .ranklist li {
+    display: flex;
+    gap: 8px;
+    padding: 6px 0;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+  .ranklist li:first-child { border-top: none; padding-top: 0; }
+  .rank-num {
+    flex: 0 0 16px;
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--tcolor);
+    padding-top: 2px;
+  }
+  .rank-body .pick {
+    font-size: 13.5px;
+    font-weight: 700;
+    line-height: 1.25;
+    margin-bottom: 1px;
+  }
+  .cp-line {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--tcolor);
+    margin-bottom: 2px;
+  }
+  .dupe-tag {
+    display: inline-block;
+    font-size: 9.5px;
+    font-weight: 600;
+    color: var(--sub);
+    background: rgba(255,255,255,0.06);
+    border-radius: 8px;
+    padding: 1px 6px;
+    margin-top: 2px;
+  }
+  .moveset { font-size: 11px; color: var(--sub); line-height: 1.35; }
+  .moveset b { color: #d7d5cc; font-weight: 600; }
+  .ov-list { max-width: 700px; margin: 0 auto; display: flex; flex-direction: column; gap: 8px; }
+  .ov-row {
+    background: var(--card-bg);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 14px;
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .ov-rank {
+    flex: 0 0 26px;
+    font-size: 12px;
+    font-weight: 800;
+    color: #6a6a78;
+    text-align: center;
+  }
+  .ov-pts {
+    flex: 0 0 54px;
+    text-align: center;
+    font-size: 15px;
+    font-weight: 800;
+    color: #ffcb05;
+  }
+  .ov-pts span { display: block; font-size: 8.5px; color: var(--sub); font-weight: 600; letter-spacing: 1px; }
+  .ov-main { flex: 1; min-width: 0; }
+  .ov-name { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+  .ov-apps { display: flex; flex-wrap: wrap; gap: 5px; }
+  .ov-chip {
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 7px;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.07);
+    color: var(--sub);
+  }
+  .ov-chip b { color: #ffcb05; font-weight: 800; }
+  .legend {
+    max-width: 700px;
+    margin: 34px auto 0;
+    text-align: center;
+    font-size: 11.5px;
+    color: var(--sub);
+    line-height: 1.6;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    padding-top: 16px;
+  }
+  .updated-stamp {
+    font-size: 10.5px;
+    color: #6a6a78;
+    margin-top: 4px;
+  }
+  .tabs {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: #0e0f14;
+    padding: 10px 0 12px;
+    margin: 0 auto 4px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .search-row {
+    max-width: 500px;
+    margin: 0 auto 18px;
+    padding: 0 4px;
+  }
+  .search-input {
+    width: 100%;
+    background: var(--card-bg);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: var(--text);
+    font-size: 13px;
+    padding: 10px 14px;
+    border-radius: 12px;
+    outline: none;
+  }
+  .search-input:focus { border-color: #ffcb05; }
+  .search-input::placeholder { color: #6a6a78; }
+  .pve-controls {
+    max-width: 700px;
+    margin: 0 auto 18px;
+    display: flex;
+    justify-content: center;
+  }
+  .toggle-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11.5px;
+    color: var(--sub);
+    background: var(--card-bg);
+    border: 1px solid rgba(255,255,255,0.08);
+    padding: 6px 12px;
+    border-radius: 20px;
+    cursor: pointer;
+    user-select: none;
+  }
+  .toggle-chip input { accent-color: #ffcb05; }
+  .ov-controls {
+    max-width: 700px;
+    margin: 0 auto 20px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+  }
+  .ov-key {
+    max-width: 700px;
+    margin: 0 auto 14px;
+    text-align: center;
+    font-size: 11px;
+    color: var(--sub);
+  }
+  .ov-key b { color: #ffcb05; }
+  .filter-chip {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--sub);
+    background: var(--card-bg);
+    border: 1px solid rgba(255,255,255,0.08);
+    padding: 6px 12px;
+    border-radius: 18px;
+    cursor: pointer;
+    user-select: none;
+  }
+  .filter-chip.active {
+    background: linear-gradient(90deg, #ffcb05, #f0a020);
+    color: #1a1200;
+    border-color: transparent;
+  }
+  .min-pts-wrap {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: var(--sub);
+    background: var(--card-bg);
+    border: 1px solid rgba(255,255,255,0.08);
+    padding: 4px 10px 4px 12px;
+    border-radius: 18px;
+  }
+  .min-pts-wrap input {
+    width: 44px;
+    background: transparent;
+    border: none;
+    color: var(--text);
+    font-size: 12px;
+    font-weight: 700;
+    outline: none;
+  }
+  .ov-apps { grid-template-columns: 1fr 1fr; display: grid !important; gap: 5px; }
+  .ov-row { cursor: pointer; flex-wrap: wrap; }
+  .ov-row .ov-detail {
+    flex-basis: 100%;
+    display: none;
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    font-size: 11px;
+    color: var(--sub);
+    line-height: 1.6;
+  }
+  .ov-row.expanded .ov-detail { display: block; }
+  .ov-detail div b { color: #d7d5cc; }
+  .ov-expand-hint { font-size: 9px; color: #55555f; margin-left: auto; align-self: center; }
+  .hidden-item { display: none !important; }
+
+  /* ---- new feature styles ---- */
+  .quicknav {
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    max-width: 1000px;
+    margin: 0 auto 16px;
+    padding: 4px 4px 10px;
+  }
+  .quicknav-chip {
+    flex: 0 0 auto;
+    background: var(--card-bg);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 14px;
+    padding: 6px 10px;
+    font-size: 14px;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .quicknav-chip:active { transform: scale(0.95); }
+  .type-effectiveness {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    font-size: 10px;
+    margin-bottom: 8px;
+    padding-bottom: 8px;
+    border-bottom: 1px dashed rgba(255,255,255,0.08);
+  }
+  .eff-strong { color: #7ee787; }
+  .eff-weak { color: #ff9090; }
+  .tier-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 17px; height: 17px;
+    border-radius: 5px;
+    font-size: 9.5px;
+    font-weight: 800;
+    margin-right: 4px;
+    color: #10111a;
+    flex: 0 0 auto;
+  }
+  .tier-S { background: #ffcb05; }
+  .tier-A { background: #ff8f3f; }
+  .tier-B { background: #6ab0ff; }
+  .tier-C { background: #9a9aa8; }
+  .blurb {
+    font-size: 10.5px;
+    color: #b7b6c2;
+    font-style: italic;
+    margin-top: 3px;
+    line-height: 1.35;
+  }
+  .cross-tab-badges { display: flex; gap: 4px; margin-top: 4px; flex-wrap: wrap; }
+  .xt-badge {
+    font-size: 9px;
+    font-weight: 700;
+    padding: 1px 6px;
+    border-radius: 8px;
+    background: rgba(61,125,202,0.18);
+    color: #7fb2ff;
+  }
+  .pick-select {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 15px; height: 15px;
+    accent-color: #ffcb05;
+    cursor: pointer;
+    z-index: 2;
+  }
+  .ranklist li { position: relative; padding-right: 24px; }
+  .copy-bar {
+    position: fixed;
+    bottom: 18px;
+    left: 50%;
+    transform: translateX(-50%) translateY(140%);
+    background: linear-gradient(90deg, #ffcb05, #f0a020);
+    color: #1a1200;
+    padding: 10px 18px;
+    border-radius: 24px;
+    font-size: 13px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.45);
+    z-index: 50;
+    transition: transform .2s ease;
+  }
+  .copy-bar.visible { transform: translateX(-50%) translateY(0); }
+  .copy-bar button {
+    background: #1a1200;
+    color: #ffcb05;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 16px;
+    font-weight: 800;
+    font-size: 12px;
+    cursor: pointer;
+  }
+  .copy-bar .cb-clear {
+    background: transparent;
+    color: #1a1200;
+    text-decoration: underline;
+    padding: 6px 4px;
+    font-weight: 700;
+    cursor: pointer;
+    border: none;
+    font-size: 12px;
+  }
+  .back-to-top {
+    position: fixed;
+    bottom: 18px;
+    right: 18px;
+    width: 42px; height: 42px;
+    border-radius: 50%;
+    background: var(--card-bg);
+    border: 1px solid rgba(255,255,255,0.12);
+    color: var(--text);
+    font-size: 18px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 40;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.4);
+  }
+  .back-to-top.visible { display: flex; }
+  .grid.compact .type-effectiveness,
+  .grid.compact .blurb,
+  .grid.compact .cross-tab-badges,
+  .grid.compact .moveset { display: none; }
+  .grid.compact .ranklist li { padding-top: 4px; padding-bottom: 4px; }
+  .grid.compact .rank-body .pick { font-size: 12px; margin-bottom: 0; display: inline; }
+  .grid.compact .cp-line { display: inline; margin-left: 6px; margin-bottom: 0; }
+  .grid.compact .dupe-tag { margin-left: 6px; margin-top: 0; }
+  .grid-controls-row {
+    max-width: 700px;
+    margin: 0 auto 14px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+  }
+  .ov-sort-row {
+    max-width: 700px;
+    margin: 0 auto 14px;
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .sort-btn {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--sub);
+    background: var(--card-bg);
+    border: 1px solid rgba(255,255,255,0.08);
+    padding: 6px 12px;
+    border-radius: 18px;
+    cursor: pointer;
+  }
+  .sort-btn.active {
+    background: linear-gradient(90deg, #ffcb05, #f0a020);
+    color: #1a1200;
+    border-color: transparent;
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="eyebrow">Raid, Great League & Ultra League Reference</div>
+  <h1>Top 3 By Type</h1>
+  <p>Switch tabs for raid attackers (PvE), Great League (1500 CP), Ultra League (2500 CP), or Master League (open CP) — top 5 picks per type, color-coded and ranked.</p>
+  <div class="updated-stamp">Data snapshot: Aug 24, 2026 — meta shifts with balance updates, so treat this as a current baseline.</div>
+</header>
+<div class="tabs">
+  <button class="tab-btn active" data-tab="pve">⚔️ Raids / PvE</button>
+  <button class="tab-btn" data-tab="gl">🟢 Great League 1500</button>
+  <button class="tab-btn" data-tab="ul">🔵 Ultra League 2500</button>
+  <button class="tab-btn" data-tab="ml">🟣 Master League</button>
+  <button class="tab-btn" data-tab="overall">🏆 Overall</button>
+</div>
+<div class="search-row">
+  <input type="text" class="search-input" id="global-search" placeholder="🔍 Search a Pokémon name...">
+</div>
+<div class="grid-controls-row" id="grid-controls">
+  <label class="toggle-chip" id="pve-shadow-toggle-wrap">
+    <input type="checkbox" id="pve-shadow-mega-toggle" checked>
+    Show Shadow & Mega/Primal forms
+  </label>
+  <label class="toggle-chip">
+    <input type="checkbox" id="elite-move-toggle" checked>
+    Show Elite/Legacy-move picks
+  </label>
+  <label class="toggle-chip">
+    <input type="checkbox" id="compact-view-toggle">
+    Compact view
+  </label>
+</div>
+<div class="quicknav" id="quicknav-pve"></div>
+<div class="quicknav" id="quicknav-gl" style="display:none"></div>
+<div class="quicknav" id="quicknav-ul" style="display:none"></div>
+<div class="quicknav" id="quicknav-ml" style="display:none"></div>
+<div class="panel active" id="panel-pve"><div class="grid" id="grid-pve"></div></div>
+<div class="panel" id="panel-gl"><div class="grid" id="grid-gl"></div></div>
+<div class="panel" id="panel-ul"><div class="grid" id="grid-ul"></div></div>
+<div class="panel" id="panel-ml"><div class="grid" id="grid-ml"></div></div>
+<div class="panel" id="panel-overall">
+  <div class="ov-key">Top 5 per type in every tab: 🥇#1=<b>5pts</b>·🥈#2=<b>4</b>·🥉#3=<b>3</b>·#4=<b>2</b>·#5=<b>1</b> &nbsp;·&nbsp; summed across every appearance</div>
+  <div class="ov-sort-row">
+    <span class="sort-btn active" data-sort="points">Sort: Points</span>
+    <span class="sort-btn" data-sort="alpha">Sort: A–Z</span>
+    <span class="sort-btn" data-sort="firsts">Sort: Most #1s</span>
+  </div>
+  <div class="ov-controls">
+    <span class="filter-chip" data-req="PvE">Must be in Raids</span>
+    <span class="filter-chip" data-req="Great League 1500">Must be in GL</span>
+    <span class="filter-chip" data-req="Ultra League 2500">Must be in UL</span>
+    <span class="filter-chip" data-req="Master League 10000">Must be in ML</span>
+    <span class="min-pts-wrap">Min pts <input type="number" id="ov-min-pts" value="0" min="0"></span>
+  </div>
+  <div id="overall-list"></div>
+</div>
+<div class="legend" id="legend-pve">
+  Meta shifts with new Megas, Elite TMs, and events — treat this as a strong current baseline for GO Fest / raid-day prep, not gospel. Now showing the top 5 attackers per type. CP shown is each Pokémon's ceiling: 100% IV (15/15/15), Level 51 via XL Candy + Best Buddy. ⚡ = requires Elite TM · 🅼 = Mega/Primal (team-wide boost, one at a time) · 🅢 = Shadow (+20% dmg, but also +20% dmg taken)
+</div>
+<div class="legend" id="legend-gl" style="display:none">
+  Based on PvPoke's live Great League (1500 CP) overall rankings. Now showing the top 5 per type. Movesets shown are each Pokémon's most-used set in that ranking. 🅢 = Shadow (+20% atk/dmg taken). Some thinner types (Fighting, Poison) lean on established meta picks beyond the top-100 sample.
+</div>
+<div class="legend" id="legend-ul" style="display:none">
+  Based on PvPoke's live Ultra League (2500 CP) overall rankings. Now showing the top 5 per type. Movesets shown are each Pokémon's most-used set in that ranking. 🅢 = Shadow (+20% atk/dmg taken).
+</div>
+<div class="legend" id="legend-ml" style="display:none">
+  Based on PvPoke's live Master League (open CP, no cap) overall rankings. Now showing the top 5 per type. CP shown is each Pokémon's ceiling: 100% IV (15/15/15), Level 51 via XL Candy + Best Buddy. Movesets shown are each Pokémon's most-used set in that ranking. Legendaries, Mega-capable, and max-CP non-legendaries dominate this bracket since there's no CP ceiling to work around.
+</div>
+<div class="legend" id="legend-overall" style="display:none">
+  Every unique Pokémon from the Raids, Great League 1500, Ultra League 2500, and Master League tabs, scored by utility. All four tabs now use the top 5 per type: #1=5 pts, #2=4, #3=3, #4=2, #5=1. Points are summed across every list and type a Pokémon appears in, then sorted highest first.
+</div>
+<div class="copy-bar" id="copy-bar">
+  <span id="copy-bar-count">0 selected</span>
+  <button id="copy-bar-btn">Copy team</button>
+  <button class="cb-clear" id="copy-bar-clear">Clear</button>
+</div>
+<button class="back-to-top" id="back-to-top" aria-label="Back to top">↑</button>
+<script>
+const TYPE_CHART = {"Normal": {"strong": [], "weak": ["Fighting"]}, "Fire": {"strong": ["Grass", "Ice", "Bug", "Steel"], "weak": ["Water", "Ground", "Rock"]}, "Water": {"strong": ["Fire", "Ground", "Rock"], "weak": ["Electric", "Grass"]}, "Electric": {"strong": ["Water", "Flying"], "weak": ["Ground"]}, "Grass": {"strong": ["Water", "Ground", "Rock"], "weak": ["Fire", "Ice", "Poison", "Flying", "Bug"]}, "Ice": {"strong": ["Grass", "Ground", "Flying", "Dragon"], "weak": ["Fire", "Fighting", "Rock", "Steel"]}, "Fighting": {"strong": ["Normal", "Ice", "Rock", "Dark", "Steel"], "weak": ["Flying", "Psychic", "Fairy"]}, "Poison": {"strong": ["Grass", "Fairy"], "weak": ["Ground", "Psychic"]}, "Ground": {"strong": ["Fire", "Electric", "Poison", "Rock", "Steel"], "weak": ["Water", "Grass", "Ice"]}, "Flying": {"strong": ["Grass", "Fighting", "Bug"], "weak": ["Electric", "Ice", "Rock"]}, "Psychic": {"strong": ["Fighting", "Poison"], "weak": ["Bug", "Ghost", "Dark"]}, "Bug": {"strong": ["Grass", "Psychic", "Dark"], "weak": ["Fire", "Flying", "Rock"]}, "Rock": {"strong": ["Fire", "Ice", "Flying", "Bug"], "weak": ["Water", "Grass", "Fighting", "Ground", "Steel"]}, "Ghost": {"strong": ["Psychic", "Ghost"], "weak": ["Ghost", "Dark"]}, "Dragon": {"strong": ["Dragon"], "weak": ["Ice", "Dragon", "Fairy"]}, "Dark": {"strong": ["Psychic", "Ghost"], "weak": ["Fighting", "Bug", "Fairy"]}, "Steel": {"strong": ["Ice", "Rock", "Fairy"], "weak": ["Fire", "Fighting", "Ground"]}, "Fairy": {"strong": ["Fighting", "Dragon", "Dark"], "weak": ["Poison", "Steel"]}};
+const APPEARANCE = {"Mega Lopunny": ["PVE"], "Shadow Ursaluna": ["PVE"], "Slaking": ["PVE"], "Mega Kangaskhan": ["PVE"], "Regigigas": ["ML", "PVE"], "Mega Blaziken": ["PVE"], "Mega Charizard Y": ["PVE"], "Reshiram": ["ML", "PVE"], "Moltres": ["PVE"], "Entei": ["ML", "PVE"], "Primal Kyogre": ["PVE"], "Mega Blastoise": ["PVE"], "Origin Palkia": ["PVE"], "Kyogre": ["ML", "PVE"], "Feraligatr": ["ML", "PVE", "UL"], "Mega Manectric": ["PVE"], "Xurkitree": ["ML", "PVE"], "Zekrom": ["ML", "PVE"], "Raikou": ["ML", "PVE", "UL"], "Magnezone": ["ML", "PVE"], "Mega Sceptile": ["PVE"], "Mega Venusaur": ["PVE"], "Rillaboom": ["PVE"], "Zarude": ["ML", "PVE"], "Kartana": ["ML", "PVE"], "White Kyurem": ["ML", "PVE"], "Mega Glalie": ["PVE"], "Glaceon": ["ML", "PVE"], "Kyurem": ["ML", "PVE"], "Walrein": ["ML", "PVE", "UL"], "Mega Mewtwo X": ["PVE"], "Mega Lucario": ["PVE"], "Shadow Machamp": ["PVE"], "Machamp": ["ML", "PVE", "UL"], "Conkeldurr": ["ML", "PVE"], "Mega Beedrill": ["PVE"], "Roserade": ["ML", "PVE"], "Mega Gengar": ["PVE"], "Nihilego": ["ML", "PVE", "UL"], "Toxicroak": ["ML", "PVE"], "Primal Groudon": ["PVE"], "Garchomp": ["ML", "PVE", "UL"], "Rhyperior": ["ML", "PVE", "UL"], "Excadrill": ["ML", "PVE", "UL"], "Swampert": ["ML", "PVE", "UL"], "Mega Rayquaza": ["PVE"], "Shadow Moltres": ["PVE"], "Mega Pidgeot": ["PVE"], "Ho-Oh": ["ML", "PVE"], "Togekiss": ["ML", "PVE", "UL"], "Mega Mewtwo Y": ["PVE"], "Mewtwo": ["ML", "PVE"], "Mega Alakazam": ["PVE"], "Metagross": ["ML", "PVE", "UL"], "Lugia": ["ML", "PVE"], "Mega Pinsir": ["PVE"], "Genesect": ["ML", "PVE"], "Scizor": ["ML", "PVE"], "Volcarona": ["ML", "PVE"], "Mega Diancie": ["PVE"], "Mega Tyranitar": ["PVE"], "Rampardos": ["PVE"], "Terrakion": ["ML", "PVE"], "Shadow Chandelure": ["PVE"], "Giratina (Origin)": ["ML", "PVE"], "Chandelure": ["ML", "PVE", "UL"], "Golurk": ["ML", "PVE"], "Black Kyurem": ["PVE"], "Hydreigon": ["ML", "PVE", "UL"], "Yveltal": ["ML", "PVE"], "Mega Gyarados": ["PVE"], "Weavile": ["ML", "PVE", "UL"], "Mega Metagross": ["PVE"], "Dialga (Origin)": ["ML", "PVE"], "Mega Gardevoir": ["PVE"], "Xerneas": ["ML", "PVE", "UL"], "Zacian (Crowned Sword)": ["ML", "PVE"], "Granbull": ["GL", "ML", "PVE", "UL"], "Lickilicky": ["GL", "UL"], "Fearow": ["GL"], "Furret": ["GL"], "Dubwool": ["GL"], "Snorlax": ["GL", "ML", "UL"], "Ninetales": ["GL", "UL"], "Talonflame": ["GL", "UL"], "Turtonator": ["GL", "UL"], "Arcanine": ["GL"], "Charizard": ["GL", "ML", "UL"], "Empoleon": ["GL", "UL"], "Quagsire": ["GL"], "Jellicent": ["GL", "UL"], "Politoed": ["GL", "UL"], "Alomomola": ["GL"], "Charjabug": ["GL"], "Stunfisk": ["GL"], "Morpeko (Hangry)": ["GL"], "Electrode": ["GL"], "Vikavolt": ["GL"], "Jumpluff": ["GL"], "Cradily": ["GL", "UL"], "Gourgeist": ["GL"], "Serperior": ["GL"], "Trevenant": ["GL", "UL"], "Lapras": ["GL", "UL"], "Sealeo": ["GL"], "Dewgong": ["GL"], "Avalugg": ["GL", "UL"], "Piloswine": ["GL"], "Medicham": ["GL"], "Poliwrath": ["GL", "UL"], "Lucario": ["GL", "ML"], "Machoke": ["GL"], "Hariyama": ["GL"], "Clodsire": ["GL"], "Drapion": ["GL", "ML", "UL"], "Nidoqueen": ["GL"], "Muk (Alolan)": ["GL", "ML", "UL"], "Skuntank": ["GL"], "Diggersby": ["GL"], "Golem": ["GL"], "Altaria": ["GL"], "Corviknight": ["GL", "UL"], "Noctowl": ["GL", "UL"], "Skarmory": ["GL", "UL"], "Grumpig": ["GL"], "Malamar": ["GL", "UL"], "Bronzong": ["GL", "UL"], "Claydol": ["GL"], "Forretress": ["GL", "UL"], "Crustle": ["GL", "UL"], "Escavalier": ["GL", "ML", "UL"], "Araquanid": ["GL", "UL"], "Bastiodon": ["GL"], "Shuckle": ["GL", "UL"], "Mimikyu (Busted)": ["GL"], "Corsola (Galarian)": ["GL"], "Runerigus": ["GL"], "Kingdra": ["GL", "ML", "UL"], "Guzzlord": ["GL"], "Flygon": ["GL", "UL"], "Noivern": ["GL"], "Sableye": ["GL"], "Umbreon": ["GL"], "Absol": ["GL", "ML", "UL"], "Tinkaton": ["GL", "UL"], "Azumarill": ["GL"], "Wigglytuff": ["GL"], "Oranguru": ["UL"], "Toucannon": ["UL"], "Staraptor": ["UL"], "Bellibolt": ["UL"], "Ampharos": ["UL"], "Zapdos": ["UL"], "Electivire": ["UL"], "Virizion": ["ML", "UL"], "Ludicolo": ["UL"], "Torterra": ["UL"], "Meganium": ["UL"], "Ninetales (Alolan)": ["UL"], "Annihilape": ["UL"], "Cobalion": ["UL"], "Tentacruel": ["UL"], "Weezing (Galarian)": ["UL"], "Zygarde (Complete)": ["UL"], "Hippowdon": ["UL"], "Moltres (Galarian)": ["UL"], "Cresselia": ["ML", "UL"], "Golisopod": ["ML", "UL"], "Aurorus": ["UL"], "Dusknoir": ["ML", "UL"], "Giratina (Altered)": ["ML", "UL"], "Florges": ["ML", "UL"], "Blissey": ["ML"], "Porygon-Z": ["ML"], "Ursaluna": ["ML"], "Palkia (Origin)": ["ML"], "Thundurus (Therian)": ["ML"], "Tangrowth": ["ML"], "Landorus (Therian)": ["ML"], "Rayquaza": ["ML"], "Latios": ["ML"], "Aggron": ["ML"], "Regirock": ["ML"]};
+function renderGrid(containerId, data, showCP, tabShort) {
+  const grid = document.getElementById(containerId);
+  data.forEach(d => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.id = `${tabShort}-type-${d.type}`;
+    card.style.setProperty('--tcolor', d.color);
+    const eff = TYPE_CHART[d.type];
+    const effHtml = eff ? `
+      <div class="type-effectiveness">
+        <span class="eff-strong">⚔ Strong vs: ${eff.strong.length ? eff.strong.join(', ') : '—'}</span>
+        <span class="eff-weak">🛡 Weak vs: ${eff.weak.length ? eff.weak.join(', ') : '—'}</span>
+      </div>` : '';
+    const items = d.picks.map((p, i) => {
+      const isSpecialForm = /🅼|🅢/.test(p.name);
+      const searchName = p.name.replace(/[^\w\s()]/g, '').trim().toLowerCase();
+      const plainName = p.name.replace(/\s*(🅼|🅢)\s*/g, '').trim();
+      const isElite = /⚡/.test(p.move);
+      const otherTabs = (APPEARANCE[plainName] || []).filter(t => t !== tabShort.toUpperCase());
+      const xtHtml = otherTabs.length ? `<div class="cross-tab-badges">${otherTabs.map(t => `<span class="xt-badge">${t}</span>`).join('')}</div>` : '';
+      const pickId = `${tabShort}|${d.type}|${i+1}|${plainName}`;
+      return `
+      <li data-name="${searchName}" data-elite="${isElite ? '1' : '0'}" ${isSpecialForm ? 'data-special-form="1"' : ''}>
+        <input type="checkbox" class="pick-select" data-pick-id="${pickId.replace(/"/g,'&quot;')}" data-pick-label="${d.type} #${i+1}: ${plainName}${showCP ? ' (' + p.cp.toLocaleString() + ' CP)' : ''}">
+        <span class="rank-num">#${i+1}</span>
+        <span class="tier-badge tier-${p.tier}">${p.tier}</span>
+        <span class="rank-body">
+          <div class="pick">${p.name}</div>
+          ${showCP ? `<div class="cp-line">${p.cp.toLocaleString()} CP</div>` : ''}
+          <div class="moveset">${p.move}</div>
+          ${p.blurb ? `<div class="blurb">${p.blurb}</div>` : ''}
+          ${xtHtml}
+          ${p.dupe ? `<div class="dupe-tag">🔁 ${p.dupe}</div>` : ''}
+        </span>
+      </li>
+    `;
+    }).join('');
+    card.innerHTML = `
+      <div class="type-badge"><span class="icon">${d.icon}</span>${d.type}</div>
+      ${effHtml}
+      <ul class="ranklist">${items}</ul>
+    `;
+    grid.appendChild(card);
+  });
+}
+// ---------- PvE / Raids ----------
+const dataPVE = [
+  { type: "Normal", color: "#A8A878", icon: "🐾", picks: [
+    { name: "Mega Lopunny 🅼", cp: 2905, move: "<b>Low Kick</b> + <b>Fire Punch</b>", tier: "S", blurb: "Best-in-slot raid DPS for this type" },
+    { name: "Shadow Ursaluna 🅢", cp: 4820, move: "<b>Tackle</b> + <b>Body Slam</b>", tier: "A", blurb: "Elite secondary attacker, close behind the top pick" },
+    { name: "Slaking", cp: 5069, move: "<b>Yawn</b> + <b>Body Slam</b>", tier: "A", blurb: "Reliable mid-tier attacker, easy to build a team around" },
+    { name: "Mega Kangaskhan 🅼", cp: 3813, move: "<b>Mud-Slap</b> + <b>Power-Up Punch</b>", tier: "B", blurb: "Budget-friendly option if you're missing the top picks" },
+    { name: "Regigigas", cp: 4498, move: "<b>Zen Headbutt</b> + <b>Focus Blast</b>", tier: "C", blurb: "Situational pick — works, but outclassed by higher ranks" },
+  ]},
+  { type: "Fire", color: "#F08030", icon: "🔥", picks: [
+    { name: "Mega Blaziken 🅼", cp: 4760, move: "<b>Fire Spin</b> + <b>Blast Burn</b> ⚡", tier: "S", blurb: "Best-in-slot raid DPS for this type (uses a Community Day / Elite TM move for its full potential)" },
+    { name: "Mega Charizard Y 🅼", cp: 5097, move: "<b>Fire Spin</b> + <b>Blast Burn</b> ⚡", tier: "A", blurb: "Elite secondary attacker, close behind the top pick (uses a Community Day / Elite TM move for its full potential)" },
+    { name: "Reshiram", cp: 4620, move: "<b>Fire Fang</b> + <b>Overheat</b>", tier: "A", blurb: "Reliable mid-tier attacker, easy to build a team around" },
+    { name: "Moltres", cp: 3826, move: "<b>Fire Spin</b> + <b>Sky Attack</b>", tier: "B", blurb: "Budget-friendly option if you're missing the top picks" },
+    { name: "Entei", cp: 3844, move: "<b>Fire Fang</b> + <b>Overheat</b>", tier: "C", blurb: "Situational pick — works, but outclassed by higher ranks" },
+  ]},
+  { type: "Water", color: "#6890F0", icon: "💧", picks: [
+    { name: "Primal Kyogre 🅼", cp: 6752, move: "<b>Waterfall</b> + <b>Origin Pulse</b>", tier: "S", blurb: "Best-in-slot raid DPS for this type" },
+    { name: "Mega Blastoise 🅼", cp: 4508, move: "<b>Water Gun</b> + <b>Hydro Cannon</b> ⚡", tier: "A", blurb: "Elite secondary attacker, close behind the top pick (uses a Community Day / Elite TM move for its full potential)" },
+    { name: "Origin Palkia", cp: 4739, move: "<b>Dragon Breath</b> + <b>Hydro Pump</b>", tier: "A", blurb: "Reliable mid-tier attacker, easy to build a team around" },
+    { name: "Kyogre", cp: 4677, move: "<b>Waterfall</b> + <b>Hydro Pump</b>", tier: "B", blurb: "Budget-friendly option if you're missing the top picks" },
+    { name: "Feraligatr", cp: 3411, move: "<b>Water Gun</b> + <b>Hydro Cannon</b> ⚡", tier: "C", blurb: "Situational pick — works, but outclassed by higher ranks (uses a Community Day / Elite TM move for its full potential)" },
+  ]},
+  { type: "Electric", color: "#F8D030", icon: "⚡", picks: [
+    { name: "Mega Manectric 🅼", cp: 2955, move: "<b>Volt Switch</b> + <b>Wild Charge</b>", tier: "S", blurb: "Best-in-slot raid DPS for this type" },
+    { name: "Xurkitree", cp: 3598, move: "<b>Thunder Shock</b> + <b>Discharge</b>", tier: "A", blurb: "Elite secondary attacker, close behind the top pick" },
+    { name: "Zekrom", cp: 4620, move: "<b>Charge Beam</b> + <b>Wild Charge</b>", tier: "A", blurb: "Reliable mid-tier attacker, easy to build a team around" },
+    { name: "Raikou", cp: 3768, move: "<b>Volt Switch</b> + <b>Wild Charge</b>", tier: "B", blurb: "Budget-friendly option if you're missing the top picks" },
+    { name: "Magnezone", cp: 2673, move: "<b>Spark</b> + <b>Wild Charge</b>", tier: "C", blurb: "Situational pick — works, but outclassed by higher ranks" },
+  ]},
+  { type: "Grass", color: "#78C850", icon: "🌿", picks: [
+    { name: "Mega Sceptile 🅼", cp: 4640, move: "<b>Bullet Seed</b> + <b>Frenzy Plant</b> ⚡", tier: "S", blurb: "Best-in-slot raid DPS for this type (uses a Community Day / Elite TM move for its full potential)" },
+    { name: "Mega Venusaur 🅼", cp: 4231, move: "<b>Vine Whip</b> + <b>Frenzy Plant</b> ⚡", tier: "A", blurb: "Elite secondary attacker, close behind the top pick (uses a Community Day / Elite TM move for its full potential)" },
+    { name: "Rillaboom", cp: 3483, move: "<b>Razor Leaf</b> + <b>Frenzy Plant</b> ⚡", tier: "A", blurb: "Reliable mid-tier attacker, easy to build a team around (uses a Community Day / Elite TM move for its full potential)" },
+    { name: "Zarude", cp: 3644, move: "<b>Vine Whip</b> + <b>Power Whip</b>", dupe: "also #5 Dark", tier: "B", blurb: "Budget-friendly option if you're missing the top picks (also ranks in Dark)" },
+    { name: "Kartana", cp: 3800, move: "<b>Razor Leaf</b> + <b>Leaf Blade</b>", tier: "C", blurb: "Situational pick — works, but outclassed by higher ranks" },
+  ]},
+  { type: "Ice", color: "#98D8D8", icon: "❄️", picks: [
+    { name: "White Kyurem", cp: 5268, move: "<b>Dragon Breath</b> + <b>Ice Burn</b> ⚡", dupe: "also #3 Dragon", tier: "S", blurb: "Best-in-slot raid DPS for this type (uses a Community Day / Elite TM move for its full potential; also ranks in Dragon)" },
+    { name: "Mega Glalie 🅼", cp: 3285, move: "<b>Frost Breath</b> + <b>Avalanche</b>", tier: "A", blurb: "Elite secondary attacker, close behind the top pick" },
+    { name: "Glaceon", cp: 3433, move: "<b>Frost Breath</b> + <b>Avalanche</b>", tier: "A", blurb: "Reliable mid-tier attacker, easy to build a team around" },
+    { name: "Kyurem", cp: 4103, move: "<b>Dragon Breath</b> + <b>Draco Meteor</b>", dupe: "also #4 Dragon", tier: "B", blurb: "Budget-friendly option if you're missing the top picks (also ranks in Dragon)" },
+    { name: "Walrein", cp: 3120, move: "<b>Powder Snow</b> + <b>Icicle Spear</b>", tier: "C", blurb: "Situational pick — works, but outclassed by higher ranks" },
+  ]},
+  { type: "Fighting", color: "#C03028", icon: "🥊", picks: [
+    { name: "Mega Mewtwo X 🅼", cp: 6993, move: "<b>Counter</b> ⚡ + <b>Focus Blast</b>", tier: "S", blurb: "Best-in-slot raid DPS for this type (uses a Community Day / Elite TM move for its full potential)" },
+    { name: "Mega Lucario 🅼", cp: 4227, move: "<b>Counter</b> ⚡ + <b>Aura Sphere</b>", dupe: "also #3 Steel", tier: "A", blurb: "Elite secondary attacker, close behind the top pick (uses a Community Day / Elite TM move for its full potential; also ranks in Steel)" },
+    { name: "Shadow Machamp 🅢", cp: 3824, move: "<b>Counter</b> ⚡ + <b>Dynamic Punch</b>", tier: "A", blurb: "Reliable mid-tier attacker, easy to build a team around (uses a Community Day / Elite TM move for its full potential)" },
+    { name: "Machamp", cp: 3308, move: "<b>Counter</b> ⚡ + <b>Dynamic Punch</b>", tier: "B", blurb: "Budget-friendly option if you're missing the top picks (uses a Community Day / Elite TM move for its full potential)" },
+    { name: "Conkeldurr", cp: 3562, move: "<b>Counter</b> ⚡ + <b>Stone Edge</b>", tier: "C", blurb: "Situational pick — works, but outclassed by higher ranks (uses a Community Day / Elite TM move for its full potential)" },
+  ]},
+  { type: "Poison", color: "#A040A0", icon: "☠️", picks: [
+    { name: "Mega Beedrill 🅼", cp: 3870, move: "<b>Poison Jab</b> + <b>Sludge Bomb</b>", dupe: "also #3 Bug", tier: "S", blurb: "Best-in-slot raid DPS for this type (also ranks in Bug)" },
+    { name: "Roserade", cp: 3403, move: "<b>Poison Jab</b> + <b>Sludge Bomb</b>", tier: "A", blurb: "Elite secondary attacker, close behind the top pick" },
+    { name: "Mega Gengar 🅼", cp: 4960, move: "<b>Lick</b> + <b>Sludge Bomb</b>", dupe: "also #1 Ghost", tier: "A", blurb: "Reliable mid-tier attacker, easy to build a team around (also ranks in Ghost)" },
+    { name: "Nihilego", cp: 3616, move: "<b>Poison Jab</b> + <b>Sludge Bomb</b>", dupe: "also #5 Rock", tier: "B", blurb: "Budget-friendly option if you're missing the top picks (also ranks in Rock)" },
+    { name: "Toxicroak", cp: 2453, move: "<b>Counter</b> ⚡ + <b>Sludge Bomb</b>", tier: "C", blurb: "Situational pick — works, but outclassed by higher ranks (uses a Community Day / Elite TM move for its full potential)" },
+  ]},
+  { type: "Ground", color: "#E0C068", icon: "🌍", picks: [
+    { name: "Primal Groudon 🅼", cp: 6752, move: "<b>Mud Shot</b> + <b>Precipice Blades</b>", tier: "S", blurb: "Best-in-slot raid DPS for this type" },
+    { name: "Garchomp", cp: 4532, move: "<b>Mud Shot</b> + <b>Earth Power</b>", dupe: "also #5 Dragon", tier: "A", blurb: "Elite secondary attacker, close behind the top pick (also ranks in Dragon)" },
+    { name: "Rhyperior", cp: 4074, move: "<b>Mud Slap</b> + <b>Earthquake</b>", tier: "A", blurb: "Reliable mid-tier attacker, easy to build a team around" },
+    { name: "Excadrill", cp: 3410, move: "<b>Mud Shot</b> + <b>Drill Run</b>", dupe: "also #4 Steel", tier: "B", blurb: "Budget-friendly option if you're missing the top picks (also ranks in Steel)" },
+    { name: "Swampert", cp: 3390, move: "<b>Mud Shot</b> + <b>Hydro Cannon</b> ⚡", tier: "C", blurb: "Situational pick — works, but outclassed by higher ranks (uses a Community Day / Elite TM move for its full potential)" },
+  ]},
+  { type: "Flying", color: "#A890F0", icon: "🌪️", picks: [
+    { name: "Mega Rayquaza 🅼", cp: 6535, move: "<b>Air Slash</b> + <b>Dragon Ascent</b>", dupe: "also #1 Dragon", tier: "S", blurb: "Best-in-slot raid DPS for this type (also ranks in Dragon)" },
+    { name: "Shadow Moltres 🅢", cp: 4335, move: "<b>Wing Attack</b> + <b>Sky Attack</b>", tier: "A", blurb: "Elite secondary attacker, close behind the top pick" },
+    { name: "Mega Pidgeot 🅼", cp: 4210, move: "<b>Wing Attack</b> + <b>Brave Bird</b>", tier: "A", blurb: "Reliable mid-tier attacker, easy to build a team around" },
+    { name: "Ho-Oh", cp: 4650, move: "<b>Incinerate</b> + <b>Sacred Fire</b> ⚡", tier: "B", blurb: "Budget-friendly option if you're missing the top picks (uses a Community Day / Elite TM move for its full potential)" },
+    { name: "Togekiss", cp: 3181, move: "<b>Charm</b> + <b>Ancient Power</b>", dupe: "also #4 Fairy", tier: "C", blurb: "Situational pick — works, but outclassed by higher ranks (also ranks in Fairy)" },
+  ]},
+  { type: "Psychic", color: "#F85888", icon: "🔮", picks: [
+    { name: "Mega Mewtwo Y 🅼", cp: 7354, move: "<b>Psycho Cut</b> + <b>Psystrike</b> ⚡", tier: "S", blurb: "Best-in-slot raid DPS for this type (uses a Community Day / Elite TM move for its full potential)" },
+    { name: "Mewtwo", cp: 4780, move: "<b>Psycho Cut</b> + <b>Ice Beam</b>", tier: "A", blurb: "Elite secondary attacker, close behind the top pick" },
+    { name: "Mega Alakazam 🅼", cp: 5160, move: "<b>Confusion</b> + <b>Future Sight</b>", tier: "A", blurb: "Reliable mid-tier attacker, easy to build a team around" },
+    { name: "Metagross", cp: 3706, move: "<b>Bullet Punch</b> + <b>Psychic</b>", dupe: "also #5 Steel", tier: "B", blurb: "Budget-friendly option if you're missing the top picks (also ranks in Steel)" },
+    { name: "Lugia", cp: 4186, move: "<b>Dragon Tail</b> + <b>Sky Attack</b>", tier: "C", blurb: "Situational pick — works, but outclassed by higher ranks" },
+  ]},
+  { type: "Bug", color: "#A8B820", icon: "🐛", picks: [
+    { name: "Mega Pinsir 🅼", cp: 4784, move: "<b>Bug Bite</b> + <b>X-Scissor</b>", tier: "S", blurb: "Best-in-slot raid DPS for this type" },
+    { name: "Genesect", cp: 3650, move: "<b>Fury Cutter</b> + <b>X-Scissor</b>", tier: "A", blurb: "Elite secondary attacker, close behind the top pick" },
+    { name: "Mega Beedrill 🅼", cp: 3870, move: "<b>Bug Bite</b> + <b>X-Scissor</b>", dupe: "also #1 Poison", tier: "A", blurb: "Reliable mid-tier attacker, easy to build a team around (also ranks in Poison)" },
+    { name: "Scizor", cp: 2812, move: "<b>Fury Cutter</b> + <b>Iron Head</b>", tier: "B", blurb: "Budget-friendly option if you're missing the top picks" },
+    { name: "Volcarona", cp: 3211, move: "<b>Fire Spin</b> + <b>Bug Buzz</b>", tier: "C", blurb: "Situational pick — works, but outclassed by higher ranks" },
+  ]},
+  { type: "Rock", color: "#B8A038", icon: "🪨", picks: [
+    { name: "Mega Diancie 🅼", cp: 4972, move: "<b>Rock Throw</b> + <b>Rock Slide</b>", tier: "S", blurb: "Best-in-slot raid DPS for this type" },
+    { name: "Mega Tyranitar 🅼", cp: 6118, move: "<b>Smack Down</b> + <b>Rock Slide</b>", tier: "A", blurb: "Elite secondary attacker, close behind the top pick" },
+    { name: "Rampardos", cp: 3336, move: "<b>Smack Down</b> + <b>Rock Slide</b>", tier: "A", blurb: "Reliable mid-tier attacker, easy to build a team around" },
+    { name: "Terrakion", cp: 3812, move: "<b>Double Kick</b> ⚡ + <b>Sacred Sword</b>", tier: "B", blurb: "Budget-friendly option if you're missing the top picks (uses a Community Day / Elite TM move for its full potential)" },
+    { name: "Nihilego", cp: 3616, move: "<b>Poison Jab</b> + <b>Rock Slide</b>", dupe: "also #4 Poison", tier: "C", blurb: "Situational pick — works, but outclassed by higher ranks (also ranks in Poison)" },
+  ]},
+  { type: "Ghost", color: "#705898", icon: "👻", picks: [
+    { name: "Mega Gengar 🅼", cp: 4960, move: "<b>Lick</b> + <b>Shadow Ball</b>", dupe: "also #3 Poison", tier: "S", blurb: "Best-in-slot raid DPS for this type (also ranks in Poison)" },
+    { name: "Shadow Chandelure 🅢", cp: 3948, move: "<b>Hex</b> + <b>Shadow Ball</b>", tier: "A", blurb: "Elite secondary attacker, close behind the top pick" },
+    { name: "Giratina (Origin)", cp: 4143, move: "<b>Shadow Claw</b> + <b>Shadow Ball</b>", tier: "A", blurb: "Reliable mid-tier attacker, easy to build a team around" },
+    { name: "Chandelure", cp: 3212, move: "<b>Fire Spin</b> + <b>Shadow Ball</b>", tier: "B", blurb: "Budget-friendly option if you're missing the top picks" },
+    { name: "Golurk", cp: 3067, move: "<b>Mud Slap</b> + <b>Dynamic Punch</b>", tier: "C", blurb: "Situational pick — works, but outclassed by higher ranks" },
+  ]},
+  { type: "Dragon", color: "#7038F8", icon: "🐉", picks: [
+    { name: "Mega Rayquaza 🅼", cp: 6535, move: "<b>Dragon Tail</b> + <b>Outrage</b>", dupe: "also #1 Flying", tier: "S", blurb: "Best-in-slot raid DPS for this type (also ranks in Flying)" },
+    { name: "Black Kyurem", cp: 5268, move: "<b>Dragon Breath</b> + <b>Outrage</b>", tier: "A", blurb: "Elite secondary attacker, close behind the top pick" },
+    { name: "White Kyurem", cp: 5268, move: "<b>Dragon Breath</b> + <b>Draco Meteor</b>", dupe: "also #1 Ice", tier: "A", blurb: "Reliable mid-tier attacker, easy to build a team around (also ranks in Ice)" },
+    { name: "Kyurem", cp: 4103, move: "<b>Dragon Breath</b> + <b>Outrage</b>", dupe: "also #4 Ice", tier: "B", blurb: "Budget-friendly option if you're missing the top picks (also ranks in Ice)" },
+    { name: "Garchomp", cp: 4532, move: "<b>Mud Shot</b> + <b>Outrage</b>", dupe: "also #2 Ground", tier: "C", blurb: "Situational pick — works, but outclassed by higher ranks (also ranks in Ground)" },
+  ]},
+  { type: "Dark", color: "#705848", icon: "🌑", picks: [
+    { name: "Hydreigon", cp: 3801, move: "<b>Bite</b> + <b>Brutal Swing</b> ⚡", tier: "S", blurb: "Best-in-slot raid DPS for this type (uses a Community Day / Elite TM move for its full potential)" },
+    { name: "Yveltal", cp: 4118, move: "<b>Snarl</b> + <b>Dark Pulse</b>", tier: "A", blurb: "Elite secondary attacker, close behind the top pick" },
+    { name: "Mega Gyarados 🅼", cp: 5396, move: "<b>Bite</b> + <b>Crunch</b>", tier: "A", blurb: "Reliable mid-tier attacker, easy to build a team around" },
+    { name: "Weavile", cp: 2637, move: "<b>Snarl</b> + <b>Avalanche</b>", tier: "B", blurb: "Budget-friendly option if you're missing the top picks" },
+    { name: "Zarude", cp: 3644, move: "<b>Vine Whip</b> + <b>Darkest Lariat</b>", dupe: "also #4 Grass", tier: "C", blurb: "Situational pick — works, but outclassed by higher ranks (also ranks in Grass)" },
+  ]},
+  { type: "Steel", color: "#B8B8D0", icon: "⚙️", picks: [
+    { name: "Mega Metagross 🅼", cp: 5618, move: "<b>Bullet Punch</b> + <b>Meteor Mash</b> ⚡", tier: "S", blurb: "Best-in-slot raid DPS for this type (uses a Community Day / Elite TM move for its full potential)" },
+    { name: "Dialga (Origin)", cp: 4679, move: "<b>Metal Claw</b> + <b>Iron Head</b>", tier: "A", blurb: "Elite secondary attacker, close behind the top pick" },
+    { name: "Mega Lucario 🅼", cp: 4227, move: "<b>Bullet Punch</b> + <b>Flash Cannon</b>", dupe: "also #2 Fighting", tier: "A", blurb: "Reliable mid-tier attacker, easy to build a team around (also ranks in Fighting)" },
+    { name: "Excadrill", cp: 3410, move: "<b>Metal Claw</b> + <b>Iron Head</b>", dupe: "also #4 Ground", tier: "B", blurb: "Budget-friendly option if you're missing the top picks (also ranks in Ground)" },
+    { name: "Metagross", cp: 3706, move: "<b>Bullet Punch</b> + <b>Meteor Mash</b> ⚡", dupe: "also #4 Psychic", tier: "C", blurb: "Situational pick — works, but outclassed by higher ranks (uses a Community Day / Elite TM move for its full potential; also ranks in Psychic)" },
+  ]},
+  { type: "Fairy", color: "#EE99AC", icon: "✨", picks: [
+    { name: "Mega Gardevoir 🅼", cp: 5162, move: "<b>Charm</b> + <b>Moonblast</b>", tier: "S", blurb: "Best-in-slot raid DPS for this type" },
+    { name: "Xerneas", cp: 3997, move: "<b>Charm</b> + <b>Moonblast</b>", tier: "A", blurb: "Elite secondary attacker, close behind the top pick" },
+    { name: "Zacian (Crowned Sword)", cp: 5696, move: "<b>Snarl</b> + <b>Play Rough</b>", tier: "A", blurb: "Reliable mid-tier attacker, easy to build a team around" },
+    { name: "Togekiss", cp: 3181, move: "<b>Charm</b> + <b>Dazzling Gleam</b>", dupe: "also #5 Flying", tier: "B", blurb: "Budget-friendly option if you're missing the top picks (also ranks in Flying)" },
+    { name: "Granbull", cp: 2632, move: "<b>Snarl</b> + <b>Play Rough</b>", tier: "C", blurb: "Situational pick — works, but outclassed by higher ranks" },
+  ]},
+];
+// ---------- Great League (1500 CP) ----------
+const dataGL = [
+  { type: "Normal", color: "#A8A878", icon: "🐾", picks: [
+    { name: "Lickilicky", move: "<b>Rollout</b> ⚡ + <b>Body Slam</b> / Shadow Ball", tier: "S", blurb: "Top Great League pick for this type — strong neutral matchups (uses a Community Day / Elite TM move for its full potential)" },
+    { name: "Fearow", move: "<b>Peck</b> + <b>Drill Peck</b> / Drill Run", tier: "A", blurb: "Excellent Great League closer, right behind the #1" },
+    { name: "Furret", move: "<b>Sucker Punch</b> + <b>Swift</b> / Trailblaze", tier: "A", blurb: "Solid all-rounder with good bulk and coverage" },
+    { name: "Dubwool", move: "<b>Wool Hex</b> + <b>Body Slam</b> / Superpower", tier: "B", blurb: "Niche but effective — good vs specific cores" },
+    { name: "Snorlax", move: "<b>Lick</b> + <b>Body Slam</b> / Yawn", tier: "C", blurb: "Rounding out the top 5 — situational or meta-dependent" },
+  ]},
+  { type: "Fire", color: "#F08030", icon: "🔥", picks: [
+    { name: "Ninetales", move: "<b>Ember</b> + <b>Weather Ball Fire</b> ⚡ / Energy Ball", tier: "S", blurb: "Top Great League pick for this type — strong neutral matchups (uses a Community Day / Elite TM move for its full potential)" },
+    { name: "Talonflame", move: "<b>Incinerate</b> + <b>Fly</b> / Brave Bird", tier: "A", blurb: "Excellent Great League closer, right behind the #1" },
+    { name: "Turtonator", move: "<b>Incinerate</b> + <b>Brutal Swing</b> / Dragon Claw", tier: "A", blurb: "Solid all-rounder with good bulk and coverage" },
+    { name: "Arcanine", move: "<b>Snarl</b> + <b>Wild Charge</b> / Flamethrower", tier: "B", blurb: "Niche but effective — good vs specific cores" },
+    { name: "Charizard", move: "<b>Fire Spin</b> + <b>Blast Burn</b> / Dragon Claw", tier: "C", blurb: "Rounding out the top 5 — situational or meta-dependent" },
+  ]},
+  { type: "Water", color: "#6890F0", icon: "💧", picks: [
+    { name: "Empoleon", move: "<b>Metal Sound</b> ⚡ + <b>Hydro Cannon</b> ⚡ / Drill Peck", dupe: "also #2 Steel", tier: "S", blurb: "Top Great League pick for this type — strong neutral matchups (uses a Community Day / Elite TM move for its full potential; also ranks in Steel)" },
+    { name: "Quagsire", move: "<b>Mud Shot</b> + <b>Aqua Tail</b> / Mud Bomb", dupe: "also #1 Ground", tier: "A", blurb: "Excellent Great League closer, right behind the #1 (also ranks in Ground)" },
+    { name: "Jellicent", move: "<b>Hex</b> + <b>Surf</b> / Shadow Ball", dupe: "also #2 Ghost", tier: "A", blurb: "Solid all-rounder with good bulk and coverage (also ranks in Ghost)" },
+    { name: "Politoed", move: "<b>Mud Shot</b> + <b>Weather Ball Water</b> / Earthquake", tier: "B", blurb: "Niche but effective — good vs specific cores" },
+    { name: "Alomomola", move: "<b>Waterfall</b> + <b>Scald</b> / Play Rough", tier: "C", blurb: "Rounding out the top 5 — situational or meta-dependent" },
+  ]},
+  { type: "Electric", color: "#F8D030", icon: "⚡", picks: [
+    { name: "Charjabug", move: "<b>Volt Switch</b> + <b>X-Scissor</b> / Discharge", dupe: "also #2 Bug", tier: "S", blurb: "Top Great League pick for this type — strong neutral matchups (also ranks in Bug)" },
+    { name: "Stunfisk", move: "<b>Thunder Shock</b> + <b>Mud Bomb</b> / Discharge", tier: "A", blurb: "Excellent Great League closer, right behind the #1" },
+    { name: "Morpeko (Hangry)", move: "<b>Thunder Shock</b> + <b>Aura Wheel</b> / Psychic Fangs", tier: "A", blurb: "Solid all-rounder with good bulk and coverage" },
+    { name: "Electrode", move: "<b>Tackle</b> + <b>Foul Play</b> / Thunderbolt", tier: "B", blurb: "Niche but effective — good vs specific cores" },
+    { name: "Vikavolt", move: "<b>Spark</b> + <b>Discharge</b> / Crunch", tier: "C", blurb: "Rounding out the top 5 — situational or meta-dependent" },
+  ]},
+  { type: "Grass", color: "#78C850", icon: "🌿", picks: [
+    { name: "Jumpluff", move: "<b>Fairy Wind</b> + <b>Energy Ball</b> / Acrobatics", dupe: "also #2 Flying", tier: "S", blurb: "Top Great League pick for this type — strong neutral matchups (also ranks in Flying)" },
+    { name: "Cradily", move: "<b>Acid</b> + <b>Rock Tomb</b> / Grass Knot", dupe: "also #1 Rock", tier: "A", blurb: "Excellent Great League closer, right behind the #1 (also ranks in Rock)" },
+    { name: "Gourgeist", move: "<b>Incinerate</b> + <b>Shadow Ball</b> / Seed Bomb", tier: "A", blurb: "Solid all-rounder with good bulk and coverage" },
+    { name: "Serperior", move: "<b>Vine Whip</b> + <b>Frenzy Plant</b> ⚡ / Aerial Ace", tier: "B", blurb: "Niche but effective — good vs specific cores (uses a Community Day / Elite TM move for its full potential)" },
+    { name: "Trevenant", move: "<b>Shadow Claw</b> + <b>Seed Bomb</b> / Foul Play", dupe: "also #4 Ghost", tier: "C", blurb: "Rounding out the top 5 — situational or meta-dependent (also ranks in Ghost)" },
+  ]},
+  { type: "Ice", color: "#98D8D8", icon: "❄️", picks: [
+    { name: "Lapras", move: "<b>Psywave</b> ⚡ + <b>Sparkling Aria</b> / Ice Beam", tier: "S", blurb: "Top Great League pick for this type — strong neutral matchups (uses a Community Day / Elite TM move for its full potential)" },
+    { name: "Sealeo", move: "<b>Powder Snow</b> + <b>Surf</b> / Body Slam", tier: "A", blurb: "Excellent Great League closer, right behind the #1" },
+    { name: "Dewgong", move: "<b>Ice Shard</b> + <b>Icy Wind</b> / Drill Run", tier: "A", blurb: "Solid all-rounder with good bulk and coverage" },
+    { name: "Avalugg", move: "<b>Ice Fang</b> + <b>Avalanche</b> / Crunch", tier: "B", blurb: "Niche but effective — good vs specific cores" },
+    { name: "Piloswine", move: "<b>Powder Snow</b> + <b>Avalanche</b> / Bulldoze", dupe: "also #4 Ground", tier: "C", blurb: "Rounding out the top 5 — situational or meta-dependent (also ranks in Ground)" },
+  ]},
+  { type: "Fighting", color: "#C03028", icon: "🥊", picks: [
+    { name: "Medicham", move: "<b>Psycho Cut</b> + <b>Ice Punch</b> / Dynamic Punch", dupe: "also #1 Psychic", tier: "S", blurb: "Top Great League pick for this type — strong neutral matchups (also ranks in Psychic)" },
+    { name: "Poliwrath", move: "<b>Mud Shot</b> + <b>Ice Punch</b> / Power-Up Punch", tier: "A", blurb: "Excellent Great League closer, right behind the #1" },
+    { name: "Lucario", move: "<b>Counter</b> ⚡ + <b>Aura Sphere</b> / Power-Up Punch", tier: "A", blurb: "Solid all-rounder with good bulk and coverage (uses a Community Day / Elite TM move for its full potential)" },
+    { name: "Machoke", move: "<b>Karate Chop</b> + <b>Cross Chop</b> / Brick Break", tier: "B", blurb: "Niche but effective — good vs specific cores" },
+    { name: "Hariyama", move: "<b>Counter</b> ⚡ + <b>Dynamic Punch</b> / Power-Up Punch", tier: "C", blurb: "Rounding out the top 5 — situational or meta-dependent (uses a Community Day / Elite TM move for its full potential)" },
+  ]},
+  { type: "Poison", color: "#A040A0", icon: "☠️", picks: [
+    { name: "Clodsire", move: "<b>Poison Sting</b> + <b>Earthquake</b> / Stone Edge", dupe: "also #2 Ground", tier: "S", blurb: "Top Great League pick for this type — strong neutral matchups (also ranks in Ground)" },
+    { name: "Drapion", move: "<b>Poison Sting</b> + <b>Crunch</b> / Aqua Tail", tier: "A", blurb: "Excellent Great League closer, right behind the #1" },
+    { name: "Nidoqueen", move: "<b>Poison Jab</b> + <b>Earth Power</b> / Sludge Wave", tier: "A", blurb: "Solid all-rounder with good bulk and coverage" },
+    { name: "Muk (Alolan)", move: "<b>Poison Jab</b> + <b>Dark Pulse</b> / Sludge Wave", tier: "B", blurb: "Niche but effective — good vs specific cores" },
+    { name: "Skuntank", move: "<b>Poison Jab</b> + <b>Crunch</b> / Flamethrower", dupe: "also #4 Dark", tier: "C", blurb: "Rounding out the top 5 — situational or meta-dependent (also ranks in Dark)" },
+  ]},
+  { type: "Ground", color: "#E0C068", icon: "🌍", picks: [
+    { name: "Quagsire", move: "<b>Mud Shot</b> + <b>Aqua Tail</b> / Mud Bomb", dupe: "also #2 Water", tier: "S", blurb: "Top Great League pick for this type — strong neutral matchups (also ranks in Water)" },
+    { name: "Clodsire", move: "<b>Poison Sting</b> + <b>Earthquake</b> / Stone Edge", dupe: "also #1 Poison", tier: "A", blurb: "Excellent Great League closer, right behind the #1 (also ranks in Poison)" },
+    { name: "Diggersby", move: "<b>Mud Shot</b> + <b>Fire Punch</b> / Scorching Sands", tier: "A", blurb: "Solid all-rounder with good bulk and coverage" },
+    { name: "Piloswine", move: "<b>Powder Snow</b> + <b>Avalanche</b> / Bulldoze", dupe: "also #5 Ice", tier: "B", blurb: "Niche but effective — good vs specific cores (also ranks in Ice)" },
+    { name: "Golem", move: "<b>Mud Slap</b> + <b>Earthquake</b> / Rock Blast", dupe: "also #4 Rock", tier: "C", blurb: "Rounding out the top 5 — situational or meta-dependent (also ranks in Rock)" },
+  ]},
+  { type: "Flying", color: "#A890F0", icon: "🌪️", picks: [
+    { name: "Altaria", move: "<b>Dragon Breath</b> + <b>Sky Attack</b> / Flamethrower", dupe: "also #1 Dragon", tier: "S", blurb: "Top Great League pick for this type — strong neutral matchups (also ranks in Dragon)" },
+    { name: "Jumpluff", move: "<b>Fairy Wind</b> + <b>Energy Ball</b> / Acrobatics", dupe: "also #1 Grass", tier: "A", blurb: "Excellent Great League closer, right behind the #1 (also ranks in Grass)" },
+    { name: "Corviknight", move: "<b>Sand Attack</b> ⚡ + <b>Air Cutter</b> / Payback", tier: "A", blurb: "Solid all-rounder with good bulk and coverage (uses a Community Day / Elite TM move for its full potential)" },
+    { name: "Noctowl", move: "<b>Wing Attack</b> + <b>Sky Attack</b> / Psychic", tier: "B", blurb: "Niche but effective — good vs specific cores" },
+    { name: "Skarmory", move: "<b>Air Slash</b> + <b>Sky Attack</b> / Flash Cannon", dupe: "also #4 Steel", tier: "C", blurb: "Rounding out the top 5 — situational or meta-dependent (also ranks in Steel)" },
+  ]},
+  { type: "Psychic", color: "#F85888", icon: "🔮", picks: [
+    { name: "Medicham", move: "<b>Psycho Cut</b> + <b>Ice Punch</b> / Dynamic Punch", dupe: "also #1 Fighting", tier: "S", blurb: "Top Great League pick for this type — strong neutral matchups (also ranks in Fighting)" },
+    { name: "Grumpig", move: "<b>Psywave</b> ⚡ + <b>Dynamic Punch</b> / Shadow Ball", tier: "A", blurb: "Excellent Great League closer, right behind the #1 (uses a Community Day / Elite TM move for its full potential)" },
+    { name: "Malamar", move: "<b>Psywave</b> ⚡ + <b>Super Power</b> / Foul Play", tier: "A", blurb: "Solid all-rounder with good bulk and coverage (uses a Community Day / Elite TM move for its full potential)" },
+    { name: "Bronzong", move: "<b>Confusion</b> + <b>Psyshock</b> / Heavy Slam", tier: "B", blurb: "Niche but effective — good vs specific cores" },
+    { name: "Claydol", move: "<b>Confusion</b> + <b>Rock Tomb</b> / Shadow Ball", tier: "C", blurb: "Rounding out the top 5 — situational or meta-dependent" },
+  ]},
+  { type: "Bug", color: "#A8B820", icon: "🐛", picks: [
+    { name: "Forretress", move: "<b>Volt Switch</b> + <b>Sand Tomb</b> / Rock Tomb", dupe: "also #3 Steel", tier: "S", blurb: "Top Great League pick for this type — strong neutral matchups (also ranks in Steel)" },
+    { name: "Charjabug", move: "<b>Volt Switch</b> + <b>X-Scissor</b> / Discharge", dupe: "also #1 Electric", tier: "A", blurb: "Excellent Great League closer, right behind the #1 (also ranks in Electric)" },
+    { name: "Crustle", move: "<b>Fury Cutter</b> + <b>X-Scissor</b> / Rock Wrecker", dupe: "also #3 Rock", tier: "A", blurb: "Solid all-rounder with good bulk and coverage (also ranks in Rock)" },
+    { name: "Escavalier", move: "<b>Fury Cutter</b> + <b>Megahorn</b> / Drill Run", tier: "B", blurb: "Niche but effective — good vs specific cores" },
+    { name: "Araquanid", move: "<b>Bug Bite</b> + <b>Bug Buzz</b> / Mirror Coat", tier: "C", blurb: "Rounding out the top 5 — situational or meta-dependent" },
+  ]},
+  { type: "Rock", color: "#B8A038", icon: "🪨", picks: [
+    { name: "Cradily", move: "<b>Acid</b> + <b>Rock Tomb</b> / Grass Knot", dupe: "also #2 Grass", tier: "S", blurb: "Top Great League pick for this type — strong neutral matchups (also ranks in Grass)" },
+    { name: "Bastiodon", move: "<b>Smack Down</b> + <b>Stone Edge</b> / Flamethrower", dupe: "also #5 Steel", tier: "A", blurb: "Excellent Great League closer, right behind the #1 (also ranks in Steel)" },
+    { name: "Crustle", move: "<b>Fury Cutter</b> + <b>X-Scissor</b> / Rock Wrecker", dupe: "also #3 Bug", tier: "A", blurb: "Solid all-rounder with good bulk and coverage (also ranks in Bug)" },
+    { name: "Golem", move: "<b>Mud Slap</b> + <b>Earthquake</b> / Rock Blast", dupe: "also #5 Ground", tier: "B", blurb: "Niche but effective — good vs specific cores (also ranks in Ground)" },
+    { name: "Shuckle", move: "<b>Rock Throw</b> + <b>Rock Slide</b> / Gyro Ball", tier: "C", blurb: "Rounding out the top 5 — situational or meta-dependent" },
+  ]},
+  { type: "Ghost", color: "#705898", icon: "👻", picks: [
+    { name: "Mimikyu (Busted)", move: "<b>Shadow Claw</b> + <b>Shadow Sneak</b> / Play Rough", dupe: "also #1 Fairy", tier: "S", blurb: "Top Great League pick for this type — strong neutral matchups (also ranks in Fairy)" },
+    { name: "Jellicent", move: "<b>Hex</b> + <b>Surf</b> / Shadow Ball", dupe: "also #3 Water", tier: "A", blurb: "Excellent Great League closer, right behind the #1 (also ranks in Water)" },
+    { name: "Corsola (Galarian)", move: "<b>Astonish</b> + <b>Night Shade</b> / Power Gem", tier: "A", blurb: "Solid all-rounder with good bulk and coverage" },
+    { name: "Trevenant", move: "<b>Shadow Claw</b> + <b>Seed Bomb</b> / Foul Play", dupe: "also #5 Grass", tier: "B", blurb: "Niche but effective — good vs specific cores (also ranks in Grass)" },
+    { name: "Runerigus", move: "<b>Hex</b> + <b>Shadow Ball</b> / Earthquake", tier: "C", blurb: "Rounding out the top 5 — situational or meta-dependent" },
+  ]},
+  { type: "Dragon", color: "#7038F8", icon: "🐉", picks: [
+    { name: "Altaria", move: "<b>Dragon Breath</b> + <b>Sky Attack</b> / Flamethrower", dupe: "also #1 Flying", tier: "S", blurb: "Top Great League pick for this type — strong neutral matchups (also ranks in Flying)" },
+    { name: "Kingdra", move: "<b>Dragon Breath</b> + <b>Surf</b> / Swift", tier: "A", blurb: "Excellent Great League closer, right behind the #1" },
+    { name: "Guzzlord", move: "<b>Dragon Tail</b> + <b>Brutal Swing</b> / Sludge Bomb", dupe: "also #1 Dark", tier: "A", blurb: "Solid all-rounder with good bulk and coverage (also ranks in Dark)" },
+    { name: "Flygon", move: "<b>Mud Shot</b> + <b>Earth Power</b> / Dragon Claw", tier: "B", blurb: "Niche but effective — good vs specific cores" },
+    { name: "Noivern", move: "<b>Bite</b> + <b>Draco Meteor</b> / Air Slash", tier: "C", blurb: "Rounding out the top 5 — situational or meta-dependent" },
+  ]},
+  { type: "Dark", color: "#705848", icon: "🌑", picks: [
+    { name: "Guzzlord", move: "<b>Dragon Tail</b> + <b>Brutal Swing</b> / Sludge Bomb", dupe: "also #3 Dragon", tier: "S", blurb: "Top Great League pick for this type — strong neutral matchups (also ranks in Dragon)" },
+    { name: "Sableye", move: "<b>Shadow Claw</b> + <b>Foul Play</b> / Drain Punch", tier: "A", blurb: "Excellent Great League closer, right behind the #1" },
+    { name: "Umbreon", move: "<b>Snarl</b> + <b>Foul Play</b> / Last Resort", tier: "A", blurb: "Solid all-rounder with good bulk and coverage" },
+    { name: "Skuntank", move: "<b>Poison Jab</b> + <b>Crunch</b> / Flamethrower", dupe: "also #5 Poison", tier: "B", blurb: "Niche but effective — good vs specific cores (also ranks in Poison)" },
+    { name: "Absol", move: "<b>Snarl</b> + <b>Payback</b> / Megahorn", tier: "C", blurb: "Rounding out the top 5 — situational or meta-dependent" },
+  ]},
+  { type: "Steel", color: "#B8B8D0", icon: "⚙️", picks: [
+    { name: "Tinkaton", move: "<b>Fairy Wind</b> + <b>Gigaton Hammer</b> / Bulldoze", dupe: "also #2 Fairy", tier: "S", blurb: "Top Great League pick for this type — strong neutral matchups (also ranks in Fairy)" },
+    { name: "Empoleon", move: "<b>Metal Sound</b> ⚡ + <b>Hydro Cannon</b> ⚡ / Drill Peck", dupe: "also #1 Water", tier: "A", blurb: "Excellent Great League closer, right behind the #1 (uses a Community Day / Elite TM move for its full potential; also ranks in Water)" },
+    { name: "Forretress", move: "<b>Volt Switch</b> + <b>Sand Tomb</b> / Rock Tomb", dupe: "also #1 Bug", tier: "A", blurb: "Solid all-rounder with good bulk and coverage (also ranks in Bug)" },
+    { name: "Skarmory", move: "<b>Air Slash</b> + <b>Sky Attack</b> / Flash Cannon", dupe: "also #5 Flying", tier: "B", blurb: "Niche but effective — good vs specific cores (also ranks in Flying)" },
+    { name: "Bastiodon", move: "<b>Smack Down</b> + <b>Stone Edge</b> / Flamethrower", dupe: "also #2 Rock", tier: "C", blurb: "Rounding out the top 5 — situational or meta-dependent (also ranks in Rock)" },
+  ]},
+  { type: "Fairy", color: "#EE99AC", icon: "✨", picks: [
+    { name: "Mimikyu (Busted)", move: "<b>Shadow Claw</b> + <b>Shadow Sneak</b> / Play Rough", dupe: "also #1 Ghost", tier: "S", blurb: "Top Great League pick for this type — strong neutral matchups (also ranks in Ghost)" },
+    { name: "Tinkaton", move: "<b>Fairy Wind</b> + <b>Gigaton Hammer</b> / Bulldoze", dupe: "also #1 Steel", tier: "A", blurb: "Excellent Great League closer, right behind the #1 (also ranks in Steel)" },
+    { name: "Azumarill", move: "<b>Bubble</b> + <b>Ice Beam</b> / Play Rough", tier: "A", blurb: "Solid all-rounder with good bulk and coverage" },
+    { name: "Wigglytuff", move: "<b>Charm</b> + <b>Play Rough</b> / Ice Beam", tier: "B", blurb: "Niche but effective — good vs specific cores" },
+    { name: "Granbull", move: "<b>Snarl</b> + <b>Play Rough</b> / Close Combat", tier: "C", blurb: "Rounding out the top 5 — situational or meta-dependent" },
+  ]},
+];
+// ---------- Ultra League (2500 CP) ----------
+const dataUL = [
+  { type: "Normal", color: "#A8A878", icon: "🐾", picks: [
+    { name: "Lickilicky", move: "<b>Rollout</b> ⚡ + <b>Body Slam</b> / Shadow Ball", tier: "S", blurb: "Top Ultra League pick for this type — strong neutral matchups (uses a Community Day / Elite TM move for its full potential)" },
+    { name: "Oranguru", move: "<b>Confusion</b> + <b>Brutal Swing</b> / Trailblaze", dupe: "also #2 Psychic", tier: "A", blurb: "Excellent Ultra League closer, right behind the #1 (also ranks in Psychic)" },
+    { name: "Toucannon", move: "<b>Peck</b> + <b>Beak Blast</b> ⚡ / Drill Peck", tier: "A", blurb: "Solid all-rounder with good bulk and coverage (uses a Community Day / Elite TM move for its full potential)" },
+    { name: "Snorlax", move: "<b>Lick</b> + <b>Body Slam</b> / Yawn", tier: "B", blurb: "Niche but effective — good vs specific cores" },
+    { name: "Staraptor", move: "<b>Wing Attack</b> + <b>Brave Bird</b> / Close Combat", tier: "C", blurb: "Rounding out the top 5 — situational or meta-dependent" },
+  ]},
+  { type: "Fire", color: "#F08030", icon: "🔥", picks: [
+    { name: "Ninetales", move: "<b>Ember</b> + <b>Weather Ball Fire</b> ⚡ / Energy Ball", tier: "S", blurb: "Top Ultra League pick for this type — strong neutral matchups (uses a Community Day / Elite TM move for its full potential)" },
+    { name: "Turtonator", move: "<b>Incinerate</b> + <b>Brutal Swing</b> / Dragon Claw", tier: "A", blurb: "Excellent Ultra League closer, right behind the #1" },
+    { name: "Talonflame", move: "<b>Incinerate</b> + <b>Fly</b> / Brave Bird", tier: "A", blurb: "Solid all-rounder with good bulk and coverage" },
+    { name: "Chandelure", move: "<b>Fire Spin</b> + <b>Shadow Ball</b> / Overheat", dupe: "also #4 Ghost", tier: "B", blurb: "Niche but effective — good vs specific cores (also ranks in Ghost)" },
+    { name: "Charizard", move: "<b>Fire Spin</b> + <b>Overheat</b> / Dragon Claw", tier: "C", blurb: "Rounding out the top 5 — situational or meta-dependent" },
+  ]},
+  { type: "Water", color: "#6890F0", icon: "💧", picks: [
+    { name: "Jellicent", move: "<b>Hex</b> + <b>Surf</b> / Shadow Ball", dupe: "also #1 Ghost", tier: "S", blurb: "Top Ultra League pick for this type — strong neutral matchups (also ranks in Ghost)" },
+    { name: "Feraligatr", move: "<b>Shadow Claw</b> + <b>Hydro Cannon</b> ⚡ / Ice Beam", tier: "A", blurb: "Excellent Ultra League closer, right behind the #1 (uses a Community Day / Elite TM move for its full potential)" },
+    { name: "Kingdra", move: "<b>Dragon Breath</b> + <b>Surf</b> / Swift", dupe: "also #2 Dragon", tier: "A", blurb: "Solid all-rounder with good bulk and coverage (also ranks in Dragon)" },
+    { name: "Empoleon", move: "<b>Metal Sound</b> ⚡ + <b>Hydro Cannon</b> ⚡ / Drill Peck", tier: "B", blurb: "Niche but effective — good vs specific cores (uses a Community Day / Elite TM move for its full potential)" },
+    { name: "Politoed", move: "<b>Mud Shot</b> + <b>Weather Ball Water</b> / Earthquake", tier: "C", blurb: "Rounding out the top 5 — situational or meta-dependent" },
+  ]},
+  { type: "Electric", color: "#F8D030", icon: "⚡", picks: [
+    { name: "Bellibolt", move: "<b>Sucker Punch</b> + <b>Parabolic Charge</b> / Zap Cannon", tier: "S", blurb: "Top Ultra League pick for this type — strong neutral matchups" },
+    { name: "Raikou", move: "<b>Thunder Shock</b> + <b>Wild Charge</b> / Aura Sphere", tier: "A", blurb: "Excellent Ultra League closer, right behind the #1" },
+    { name: "Ampharos", move: "<b>Volt Switch</b> + <b>Brutal Swing</b> / Trailblaze", tier: "A", blurb: "Solid all-rounder with good bulk and coverage" },
+    { name: "Zapdos", move: "<b>Thunder Shock</b> + <b>Zap Cannon</b> / Ancient Power", tier: "B", blurb: "Niche but effective — good vs specific cores" },
+    { name: "Electivire", move: "<b>Thunder Shock</b> + <b>Wild Charge</b> / Ice Punch", tier: "C", blurb: "Rounding out the top 5 — situational or meta-dependent" },
+  ]},
+  { type: "Grass", color: "#78C850", icon: "🌿", picks: [
+    { name: "Virizion", move: "<b>Double Kick</b> ⚡ + <b>Leaf Blade</b> / Sacred Sword", dupe: "also #1 Fighting", tier: "S", blurb: "Top Ultra League pick for this type — strong neutral matchups (uses a Community Day / Elite TM move for its full potential; also ranks in Fighting)" },
+    { name: "Cradily", move: "<b>Acid</b> + <b>Rock Tomb</b> / Grass Knot", dupe: "also #1 Rock", tier: "A", blurb: "Excellent Ultra League closer, right behind the #1 (also ranks in Rock)" },
+    { name: "Ludicolo", move: "<b>Astonish</b> + <b>Weather Ball Water</b> / Energy Ball", tier: "A", blurb: "Solid all-rounder with good bulk and coverage" },
+    { name: "Torterra", move: "<b>Razor Leaf</b> + <b>Frenzy Plant</b> ⚡ / Earthquake", tier: "B", blurb: "Niche but effective — good vs specific cores (uses a Community Day / Elite TM move for its full potential)" },
+    { name: "Meganium", move: "<b>Vine Whip</b> + <b>Frenzy Plant</b> ⚡ / Earthquake", tier: "C", blurb: "Rounding out the top 5 — situational or meta-dependent (uses a Community Day / Elite TM move for its full potential)" },
+  ]},
+  { type: "Ice", color: "#98D8D8", icon: "❄️", picks: [
+    { name: "Ninetales (Alolan)", move: "<b>Powder Snow</b> + <b>Weather Ball Ice</b> ⚡ / Chilling Water", dupe: "also #3 Fairy", tier: "S", blurb: "Top Ultra League pick for this type — strong neutral matchups (uses a Community Day / Elite TM move for its full potential; also ranks in Fairy)" },
+    { name: "Lapras", move: "<b>Psywave</b> ⚡ + <b>Sparkling Aria</b> / Ice Beam", tier: "A", blurb: "Excellent Ultra League closer, right behind the #1 (uses a Community Day / Elite TM move for its full potential)" },
+    { name: "Walrein", move: "<b>Powder Snow</b> + <b>Icicle Spear</b> / Earthquake", tier: "A", blurb: "Solid all-rounder with good bulk and coverage" },
+    { name: "Weavile", move: "<b>Snarl</b> + <b>Avalanche</b> / Foul Play", dupe: "also #4 Dark", tier: "B", blurb: "Niche but effective — good vs specific cores (also ranks in Dark)" },
+    { name: "Avalugg", move: "<b>Ice Fang</b> + <b>Avalanche</b> / Crunch", tier: "C", blurb: "Rounding out the top 5 — situational or meta-dependent" },
+  ]},
+  { type: "Fighting", color: "#C03028", icon: "🥊", picks: [
+    { name: "Virizion", move: "<b>Double Kick</b> ⚡ + <b>Leaf Blade</b> / Sacred Sword", dupe: "also #1 Grass", tier: "S", blurb: "Top Ultra League pick for this type — strong neutral matchups (uses a Community Day / Elite TM move for its full potential; also ranks in Grass)" },
+    { name: "Annihilape", move: "<b>Low Kick</b> + <b>Rage Fist</b> / Close Combat", tier: "A", blurb: "Excellent Ultra League closer, right behind the #1" },
+    { name: "Cobalion", move: "<b>Double Kick</b> ⚡ + <b>Sacred Sword</b> / Stone Edge", tier: "A", blurb: "Solid all-rounder with good bulk and coverage (uses a Community Day / Elite TM move for its full potential)" },
+    { name: "Machamp", move: "<b>Counter</b> ⚡ + <b>Dynamic Punch</b> / Cross Chop", tier: "B", blurb: "Niche but effective — good vs specific cores (uses a Community Day / Elite TM move for its full potential)" },
+    { name: "Poliwrath", move: "<b>Mud Shot</b> + <b>Ice Punch</b> / Power-Up Punch", tier: "C", blurb: "Rounding out the top 5 — situational or meta-dependent" },
+  ]},
+  { type: "Poison", color: "#A040A0", icon: "☠️", picks: [
+    { name: "Tentacruel", move: "<b>Acid</b> + <b>Scald</b> / Payback", tier: "S", blurb: "Top Ultra League pick for this type — strong neutral matchups" },
+    { name: "Drapion", move: "<b>Poison Sting</b> + <b>Crunch</b> / Aqua Tail", tier: "A", blurb: "Excellent Ultra League closer, right behind the #1" },
+    { name: "Weezing (Galarian)", move: "<b>Fairy Wind</b> + <b>Brutal Swing</b> / Sludge", tier: "A", blurb: "Solid all-rounder with good bulk and coverage" },
+    { name: "Nihilego", move: "<b>Poison Jab</b> + <b>Rock Slide</b> / Sludge Bomb", tier: "B", blurb: "Niche but effective — good vs specific cores" },
+    { name: "Muk (Alolan)", move: "<b>Poison Jab</b> + <b>Dark Pulse</b> / Sludge Wave", tier: "C", blurb: "Rounding out the top 5 — situational or meta-dependent" },
+  ]},
+  { type: "Ground", color: "#E0C068", icon: "🌍", picks: [
+    { name: "Zygarde (Complete)", move: "<b>Dragon Tail</b> + <b>Crunch</b> / Earthquake", dupe: "also #1 Dragon", tier: "S", blurb: "Top Ultra League pick for this type — strong neutral matchups (also ranks in Dragon)" },
+    { name: "Swampert", move: "<b>Mud Shot</b> + <b>Hydro Cannon</b> ⚡ / Earthquake", tier: "A", blurb: "Excellent Ultra League closer, right behind the #1 (uses a Community Day / Elite TM move for its full potential)" },
+    { name: "Hippowdon", move: "<b>Sand Attack</b> ⚡ + <b>Weather Ball Rock</b> / Earth Power", tier: "A", blurb: "Solid all-rounder with good bulk and coverage (uses a Community Day / Elite TM move for its full potential)" },
+    { name: "Excadrill", move: "<b>Mud Shot</b> + <b>Rock Slide</b> / Drill Run", dupe: "also #4 Steel", tier: "B", blurb: "Niche but effective — good vs specific cores (also ranks in Steel)" },
+    { name: "Garchomp", move: "<b>Mud Shot</b> + <b>Earth Power</b> / Outrage", dupe: "also #4 Dragon", tier: "C", blurb: "Rounding out the top 5 — situational or meta-dependent (also ranks in Dragon)" },
+  ]},
+  { type: "Flying", color: "#A890F0", icon: "🌪️", picks: [
+    { name: "Corviknight", move: "<b>Sand Attack</b> ⚡ + <b>Air Cutter</b> / Payback", dupe: "also #2 Steel", tier: "S", blurb: "Top Ultra League pick for this type — strong neutral matchups (uses a Community Day / Elite TM move for its full potential; also ranks in Steel)" },
+    { name: "Moltres (Galarian)", move: "<b>Sucker Punch</b> + <b>Fly</b> / Brave Bird", dupe: "also #1 Dark", tier: "A", blurb: "Excellent Ultra League closer, right behind the #1 (also ranks in Dark)" },
+    { name: "Togekiss", move: "<b>Peck</b> + <b>Psyshock</b> / Aura Sphere", tier: "A", blurb: "Solid all-rounder with good bulk and coverage" },
+    { name: "Skarmory", move: "<b>Air Slash</b> + <b>Sky Attack</b> / Flash Cannon", tier: "B", blurb: "Niche but effective — good vs specific cores" },
+    { name: "Noctowl", move: "<b>Wing Attack</b> + <b>Sky Attack</b> / Psychic", tier: "C", blurb: "Rounding out the top 5 — situational or meta-dependent" },
+  ]},
+  { type: "Psychic", color: "#F85888", icon: "🔮", picks: [
+    { name: "Malamar", move: "<b>Psywave</b> ⚡ + <b>Foul Play</b> / Super Power", dupe: "also #2 Dark", tier: "S", blurb: "Top Ultra League pick for this type — strong neutral matchups (uses a Community Day / Elite TM move for its full potential; also ranks in Dark)" },
+    { name: "Oranguru", move: "<b>Confusion</b> + <b>Brutal Swing</b> / Trailblaze", dupe: "also #2 Normal", tier: "A", blurb: "Excellent Ultra League closer, right behind the #1 (also ranks in Normal)" },
+    { name: "Cresselia", move: "<b>Psycho Cut</b> + <b>Grass Knot</b> / Moonblast", tier: "A", blurb: "Solid all-rounder with good bulk and coverage" },
+    { name: "Metagross", move: "<b>Bullet Punch</b> + <b>Psychic</b> / Meteor Mash ⚡", dupe: "also #5 Steel", tier: "B", blurb: "Niche but effective — good vs specific cores (uses a Community Day / Elite TM move for its full potential; also ranks in Steel)" },
+    { name: "Bronzong", move: "<b>Confusion</b> + <b>Psyshock</b> / Heavy Slam", tier: "C", blurb: "Rounding out the top 5 — situational or meta-dependent" },
+  ]},
+  { type: "Bug", color: "#A8B820", icon: "🐛", picks: [
+    { name: "Forretress", move: "<b>Volt Switch</b> + <b>Rock Tomb</b> / Sand Tomb", dupe: "also #3 Steel", tier: "S", blurb: "Top Ultra League pick for this type — strong neutral matchups (also ranks in Steel)" },
+    { name: "Golisopod", move: "<b>Fury Cutter</b> + <b>X-Scissor</b> / Aqua Jet", tier: "A", blurb: "Excellent Ultra League closer, right behind the #1" },
+    { name: "Crustle", move: "<b>Fury Cutter</b> + <b>X-Scissor</b> / Rock Wrecker", dupe: "also #3 Rock", tier: "A", blurb: "Solid all-rounder with good bulk and coverage (also ranks in Rock)" },
+    { name: "Escavalier", move: "<b>Fury Cutter</b> + <b>Megahorn</b> / Drill Run", tier: "B", blurb: "Niche but effective — good vs specific cores" },
+    { name: "Araquanid", move: "<b>Bug Bite</b> + <b>Bug Buzz</b> / Mirror Coat", tier: "C", blurb: "Rounding out the top 5 — situational or meta-dependent" },
+  ]},
+  { type: "Rock", color: "#B8A038", icon: "🪨", picks: [
+    { name: "Cradily", move: "<b>Acid</b> + <b>Rock Tomb</b> / Grass Knot", dupe: "also #2 Grass", tier: "S", blurb: "Top Ultra League pick for this type — strong neutral matchups (also ranks in Grass)" },
+    { name: "Aurorus", move: "<b>Powder Snow</b> + <b>Weather Ball Ice</b> ⚡ / Meteor Beam", tier: "A", blurb: "Excellent Ultra League closer, right behind the #1 (uses a Community Day / Elite TM move for its full potential)" },
+    { name: "Crustle", move: "<b>Fury Cutter</b> + <b>X-Scissor</b> / Rock Wrecker", dupe: "also #3 Bug", tier: "A", blurb: "Solid all-rounder with good bulk and coverage (also ranks in Bug)" },
+    { name: "Rhyperior", move: "<b>Mud Slap</b> + <b>Rock Wrecker</b> / Earthquake", tier: "B", blurb: "Niche but effective — good vs specific cores" },
+    { name: "Shuckle", move: "<b>Rock Throw</b> + <b>Rock Slide</b> / Gyro Ball", tier: "C", blurb: "Rounding out the top 5 — situational or meta-dependent" },
+  ]},
+  { type: "Ghost", color: "#705898", icon: "👻", picks: [
+    { name: "Jellicent", move: "<b>Hex</b> + <b>Surf</b> / Shadow Ball", dupe: "also #1 Water", tier: "S", blurb: "Top Ultra League pick for this type — strong neutral matchups (also ranks in Water)" },
+    { name: "Dusknoir", move: "<b>Astonish</b> + <b>Dynamic Punch</b> / Shadow Punch", tier: "A", blurb: "Excellent Ultra League closer, right behind the #1" },
+    { name: "Giratina (Altered)", move: "<b>Dragon Breath</b> + <b>Dragon Claw</b> / Shadow Sneak", dupe: "also #3 Dragon", tier: "A", blurb: "Solid all-rounder with good bulk and coverage (also ranks in Dragon)" },
+    { name: "Chandelure", move: "<b>Fire Spin</b> + <b>Shadow Ball</b> / Overheat", dupe: "also #4 Fire", tier: "B", blurb: "Niche but effective — good vs specific cores (also ranks in Fire)" },
+    { name: "Trevenant", move: "<b>Shadow Claw</b> + <b>Seed Bomb</b> / Foul Play", tier: "C", blurb: "Rounding out the top 5 — situational or meta-dependent" },
+  ]},
+  { type: "Dragon", color: "#7038F8", icon: "🐉", picks: [
+    { name: "Zygarde (Complete)", move: "<b>Dragon Tail</b> + <b>Crunch</b> / Earthquake", dupe: "also #1 Ground", tier: "S", blurb: "Top Ultra League pick for this type — strong neutral matchups (also ranks in Ground)" },
+    { name: "Kingdra", move: "<b>Dragon Breath</b> + <b>Surf</b> / Swift", dupe: "also #3 Water", tier: "A", blurb: "Excellent Ultra League closer, right behind the #1 (also ranks in Water)" },
+    { name: "Giratina (Altered)", move: "<b>Dragon Breath</b> + <b>Dragon Claw</b> / Shadow Sneak", dupe: "also #3 Ghost", tier: "A", blurb: "Solid all-rounder with good bulk and coverage (also ranks in Ghost)" },
+    { name: "Garchomp", move: "<b>Mud Shot</b> + <b>Outrage</b> / Earth Power", dupe: "also #5 Ground", tier: "B", blurb: "Niche but effective — good vs specific cores (also ranks in Ground)" },
+    { name: "Flygon", move: "<b>Mud Shot</b> + <b>Earth Power</b> / Dragon Claw", tier: "C", blurb: "Rounding out the top 5 — situational or meta-dependent" },
+  ]},
+  { type: "Dark", color: "#705848", icon: "🌑", picks: [
+    { name: "Moltres (Galarian)", move: "<b>Sucker Punch</b> + <b>Fly</b> / Brave Bird", dupe: "also #2 Flying", tier: "S", blurb: "Top Ultra League pick for this type — strong neutral matchups (also ranks in Flying)" },
+    { name: "Malamar", move: "<b>Psywave</b> ⚡ + <b>Foul Play</b> / Super Power", dupe: "also #1 Psychic", tier: "A", blurb: "Excellent Ultra League closer, right behind the #1 (uses a Community Day / Elite TM move for its full potential; also ranks in Psychic)" },
+    { name: "Hydreigon", move: "<b>Dragon Breath</b> + <b>Brutal Swing</b> / Fly", tier: "A", blurb: "Solid all-rounder with good bulk and coverage" },
+    { name: "Weavile", move: "<b>Snarl</b> + <b>Foul Play</b> / Avalanche", dupe: "also #4 Ice", tier: "B", blurb: "Niche but effective — good vs specific cores (also ranks in Ice)" },
+    { name: "Absol", move: "<b>Snarl</b> + <b>Payback</b> / Megahorn", tier: "C", blurb: "Rounding out the top 5 — situational or meta-dependent" },
+  ]},
+  { type: "Steel", color: "#B8B8D0", icon: "⚙️", picks: [
+    { name: "Tinkaton", move: "<b>Fairy Wind</b> + <b>Gigaton Hammer</b> / Bulldoze", dupe: "also #1 Fairy", tier: "S", blurb: "Top Ultra League pick for this type — strong neutral matchups (also ranks in Fairy)" },
+    { name: "Corviknight", move: "<b>Sand Attack</b> ⚡ + <b>Air Cutter</b> / Payback", dupe: "also #1 Flying", tier: "A", blurb: "Excellent Ultra League closer, right behind the #1 (uses a Community Day / Elite TM move for its full potential; also ranks in Flying)" },
+    { name: "Forretress", move: "<b>Volt Switch</b> + <b>Rock Tomb</b> / Sand Tomb", dupe: "also #1 Bug", tier: "A", blurb: "Solid all-rounder with good bulk and coverage (also ranks in Bug)" },
+    { name: "Excadrill", move: "<b>Mud Shot</b> + <b>Drill Run</b> / Rock Slide", dupe: "also #4 Ground", tier: "B", blurb: "Niche but effective — good vs specific cores (also ranks in Ground)" },
+    { name: "Metagross", move: "<b>Bullet Punch</b> + <b>Meteor Mash</b> ⚡ / Psychic", dupe: "also #4 Psychic", tier: "C", blurb: "Rounding out the top 5 — situational or meta-dependent (uses a Community Day / Elite TM move for its full potential; also ranks in Psychic)" },
+  ]},
+  { type: "Fairy", color: "#EE99AC", icon: "✨", picks: [
+    { name: "Tinkaton", move: "<b>Fairy Wind</b> + <b>Gigaton Hammer</b> / Bulldoze", dupe: "also #1 Steel", tier: "S", blurb: "Top Ultra League pick for this type — strong neutral matchups (also ranks in Steel)" },
+    { name: "Florges", move: "<b>Fairy Wind</b> + <b>Chilling Water</b> / Disarming Voice", tier: "A", blurb: "Excellent Ultra League closer, right behind the #1" },
+    { name: "Ninetales (Alolan)", move: "<b>Powder Snow</b> + <b>Weather Ball Ice</b> ⚡ / Chilling Water", dupe: "also #1 Ice", tier: "A", blurb: "Solid all-rounder with good bulk and coverage (uses a Community Day / Elite TM move for its full potential; also ranks in Ice)" },
+    { name: "Granbull", move: "<b>Snarl</b> + <b>Play Rough</b> / Close Combat", tier: "B", blurb: "Niche but effective — good vs specific cores" },
+    { name: "Xerneas", move: "<b>Charm</b> + <b>Moonblast</b> / Thunder", tier: "C", blurb: "Rounding out the top 5 — situational or meta-dependent" },
+  ]},
+];
+// ---------- Master League (Open CP, no cap) ----------
+const dataML = [
+  { type: "Normal", color: "#A8A878", icon: "🐾", picks: [
+    { name: "Snorlax", cp: 3980, move: "<b>Lick</b> + <b>Body Slam</b> / Heavy Slam", tier: "S", blurb: "Top Master League pick for this type — strong neutral matchups" },
+    { name: "Regigigas", cp: 4498, move: "<b>Zen Headbutt</b> + <b>Thunder</b> / Focus Blast", tier: "A", blurb: "Excellent Master League closer, right behind the #1" },
+    { name: "Blissey", cp: 3016, move: "<b>Zen Headbutt</b> + <b>Dazzling Gleam</b> / Psychic", tier: "A", blurb: "Solid all-rounder with good bulk and coverage" },
+    { name: "Porygon-Z", cp: 3620, move: "<b>Hidden Power</b> + <b>Tri Attack</b> / Zap Cannon", tier: "B", blurb: "Niche but effective — good vs specific cores" },
+    { name: "Ursaluna", cp: 4149, move: "<b>Take Down</b> + <b>Earthquake</b> / High Horsepower", tier: "C", blurb: "Rounding out the top 5 — situational or meta-dependent" },
+  ]},
+  { type: "Fire", color: "#F08030", icon: "🔥", picks: [
+    { name: "Reshiram", cp: 4620, move: "<b>Fire Fang</b> + <b>Overheat</b> / Draco Meteor", dupe: "also #1 Dragon", tier: "S", blurb: "Top Master League pick for this type — strong neutral matchups (also ranks in Dragon)" },
+    { name: "Ho-Oh", cp: 4650, move: "<b>Incinerate</b> + <b>Sacred Fire</b> ⚡ / Brave Bird", dupe: "also #1 Flying", tier: "A", blurb: "Excellent Master League closer, right behind the #1 (uses a Community Day / Elite TM move for its full potential; also ranks in Flying)" },
+    { name: "Entei", cp: 3844, move: "<b>Fire Fang</b> + <b>Overheat</b> / Iron Head", tier: "A", blurb: "Solid all-rounder with good bulk and coverage" },
+    { name: "Charizard", cp: 3776, move: "<b>Fire Spin</b> + <b>Blast Burn</b> ⚡ / Dragon Claw", tier: "B", blurb: "Niche but effective — good vs specific cores (uses a Community Day / Elite TM move for its full potential)" },
+    { name: "Chandelure", cp: 3212, move: "<b>Fire Spin</b> + <b>Overheat</b> / Shadow Ball", dupe: "also #2 Ghost", tier: "C", blurb: "Rounding out the top 5 — situational or meta-dependent (also ranks in Ghost)" },
+  ]},
+  { type: "Water", color: "#6890F0", icon: "💧", picks: [
+    { name: "Kyogre", cp: 4677, move: "<b>Waterfall</b> + <b>Hydro Pump</b> / Blizzard", tier: "S", blurb: "Top Master League pick for this type — strong neutral matchups" },
+    { name: "Swampert", cp: 3390, move: "<b>Mud Shot</b> + <b>Hydro Cannon</b> ⚡ / Earthquake", dupe: "also #1 Ground", tier: "A", blurb: "Excellent Master League closer, right behind the #1 (uses a Community Day / Elite TM move for its full potential; also ranks in Ground)" },
+    { name: "Feraligatr", cp: 3411, move: "<b>Waterfall</b> + <b>Hydro Cannon</b> ⚡ / Ice Beam", tier: "A", blurb: "Solid all-rounder with good bulk and coverage (uses a Community Day / Elite TM move for its full potential)" },
+    { name: "Palkia (Origin)", cp: 4988, move: "<b>Dragon Breath</b> + <b>Hydro Pump</b> / Draco Meteor", dupe: "also #4 Dragon", tier: "B", blurb: "Niche but effective — good vs specific cores (also ranks in Dragon)" },
+    { name: "Kingdra", cp: 3164, move: "<b>Dragon Breath</b> + <b>Outrage</b> / Surf", tier: "C", blurb: "Rounding out the top 5 — situational or meta-dependent" },
+  ]},
+  { type: "Electric", color: "#F8D030", icon: "⚡", picks: [
+    { name: "Zekrom", cp: 4620, move: "<b>Charge Beam</b> + <b>Wild Charge</b> / Outrage", dupe: "also #2 Dragon", tier: "S", blurb: "Top Master League pick for this type — strong neutral matchups (also ranks in Dragon)" },
+    { name: "Magnezone", cp: 2673, move: "<b>Spark</b> + <b>Wild Charge</b> / Mirror Shot", tier: "A", blurb: "Excellent Master League closer, right behind the #1" },
+    { name: "Raikou", cp: 3768, move: "<b>Volt Switch</b> + <b>Wild Charge</b> / Shadow Ball", tier: "A", blurb: "Solid all-rounder with good bulk and coverage" },
+    { name: "Xurkitree", cp: 3598, move: "<b>Thunder Shock</b> + <b>Discharge</b> / Dazzling Gleam", tier: "B", blurb: "Niche but effective — good vs specific cores" },
+    { name: "Thundurus (Therian)", cp: 3467, move: "<b>Volt Switch</b> + <b>Thunder</b> / Focus Blast", tier: "C", blurb: "Rounding out the top 5 — situational or meta-dependent" },
+  ]},
+  { type: "Grass", color: "#78C850", icon: "🌿", picks: [
+    { name: "Zarude", cp: 3644, move: "<b>Vine Whip</b> + <b>Power Whip</b> / Darkest Lariat", dupe: "also #2 Dark", tier: "S", blurb: "Top Master League pick for this type — strong neutral matchups (also ranks in Dark)" },
+    { name: "Roserade", cp: 3403, move: "<b>Poison Jab</b> + <b>Weather Ball Poison</b> / Sludge Bomb", dupe: "also #1 Poison", tier: "A", blurb: "Excellent Master League closer, right behind the #1 (also ranks in Poison)" },
+    { name: "Tangrowth", cp: 3427, move: "<b>Vine Whip</b> + <b>Power Whip</b> / Rock Slide", tier: "A", blurb: "Solid all-rounder with good bulk and coverage" },
+    { name: "Kartana", cp: 3800, move: "<b>Razor Leaf</b> + <b>Leaf Blade</b> / X-Scissor", tier: "B", blurb: "Niche but effective — good vs specific cores" },
+    { name: "Virizion", cp: 3169, move: "<b>Double Kick</b> ⚡ + <b>Leaf Blade</b> / Sacred Sword", dupe: "also #4 Fighting", tier: "C", blurb: "Rounding out the top 5 — situational or meta-dependent (uses a Community Day / Elite TM move for its full potential; also ranks in Fighting)" },
+  ]},
+  { type: "Ice", color: "#98D8D8", icon: "❄️", picks: [
+    { name: "Kyurem", cp: 4103, move: "<b>Dragon Breath</b> + <b>Draco Meteor</b> / Ice Beam", tier: "S", blurb: "Top Master League pick for this type — strong neutral matchups" },
+    { name: "Weavile", cp: 2637, move: "<b>Snarl</b> + <b>Avalanche</b> / Foul Play", dupe: "also #3 Dark", tier: "A", blurb: "Excellent Master League closer, right behind the #1 (also ranks in Dark)" },
+    { name: "Walrein", cp: 3120, move: "<b>Powder Snow</b> + <b>Icicle Spear</b> / Earthquake", tier: "A", blurb: "Solid all-rounder with good bulk and coverage" },
+    { name: "White Kyurem", cp: 5268, move: "<b>Dragon Breath</b> + <b>Ice Burn</b> ⚡ / Draco Meteor", dupe: "also #5 Dragon", tier: "B", blurb: "Niche but effective — good vs specific cores (uses a Community Day / Elite TM move for its full potential; also ranks in Dragon)" },
+    { name: "Glaceon", cp: 3433, move: "<b>Frost Breath</b> + <b>Avalanche</b> / Water Pulse", tier: "C", blurb: "Rounding out the top 5 — situational or meta-dependent" },
+  ]},
+  { type: "Fighting", color: "#C03028", icon: "🥊", picks: [
+    { name: "Machamp", cp: 3308, move: "<b>Counter</b> ⚡ + <b>Cross Chop</b> / Rock Slide", tier: "S", blurb: "Top Master League pick for this type — strong neutral matchups (uses a Community Day / Elite TM move for its full potential)" },
+    { name: "Conkeldurr", cp: 3562, move: "<b>Counter</b> ⚡ + <b>Dynamic Punch</b> / Stone Edge", tier: "A", blurb: "Excellent Master League closer, right behind the #1 (uses a Community Day / Elite TM move for its full potential)" },
+    { name: "Lucario", cp: 3453, move: "<b>Counter</b> ⚡ + <b>Aura Sphere</b> / Shadow Ball", dupe: "also #3 Steel", tier: "A", blurb: "Solid all-rounder with good bulk and coverage (uses a Community Day / Elite TM move for its full potential; also ranks in Steel)" },
+    { name: "Virizion", cp: 3169, move: "<b>Double Kick</b> ⚡ + <b>Leaf Blade</b> / Sacred Sword", dupe: "also #5 Grass", tier: "B", blurb: "Niche but effective — good vs specific cores (uses a Community Day / Elite TM move for its full potential; also ranks in Grass)" },
+    { name: "Terrakion", cp: 3812, move: "<b>Double Kick</b> ⚡ + <b>Sacred Sword</b> / Rock Slide", dupe: "also #3 Rock", tier: "C", blurb: "Rounding out the top 5 — situational or meta-dependent (uses a Community Day / Elite TM move for its full potential; also ranks in Rock)" },
+  ]},
+  { type: "Poison", color: "#A040A0", icon: "☠️", picks: [
+    { name: "Roserade", cp: 3403, move: "<b>Poison Jab</b> + <b>Weather Ball Poison</b> / Sludge Bomb", dupe: "also #2 Grass", tier: "S", blurb: "Top Master League pick for this type — strong neutral matchups (also ranks in Grass)" },
+    { name: "Nihilego", cp: 3616, move: "<b>Poison Jab</b> + <b>Rock Slide</b> / Sludge Bomb", dupe: "also #1 Rock", tier: "A", blurb: "Excellent Master League closer, right behind the #1 (also ranks in Rock)" },
+    { name: "Toxicroak", cp: 2453, move: "<b>Counter</b> ⚡ + <b>Sludge Bomb</b> / Mud Bomb", tier: "A", blurb: "Solid all-rounder with good bulk and coverage (uses a Community Day / Elite TM move for its full potential)" },
+    { name: "Muk (Alolan)", cp: 2465, move: "<b>Poison Jab</b> + <b>Dark Pulse</b> / Sludge Wave", tier: "B", blurb: "Niche but effective — good vs specific cores" },
+    { name: "Drapion", cp: 2422, move: "<b>Poison Sting</b> + <b>Crunch</b> / Aqua Tail", tier: "C", blurb: "Rounding out the top 5 — situational or meta-dependent" },
+  ]},
+  { type: "Ground", color: "#E0C068", icon: "🌍", picks: [
+    { name: "Swampert", cp: 3390, move: "<b>Mud Shot</b> + <b>Hydro Cannon</b> ⚡ / Earthquake", dupe: "also #2 Water", tier: "S", blurb: "Top Master League pick for this type — strong neutral matchups (uses a Community Day / Elite TM move for its full potential; also ranks in Water)" },
+    { name: "Garchomp", cp: 4532, move: "<b>Mud Shot</b> + <b>Outrage</b> / Earth Power", dupe: "also #3 Dragon", tier: "A", blurb: "Excellent Master League closer, right behind the #1 (also ranks in Dragon)" },
+    { name: "Excadrill", cp: 3410, move: "<b>Mud Shot</b> + <b>Rock Slide</b> / Drill Run", dupe: "also #2 Steel", tier: "A", blurb: "Solid all-rounder with good bulk and coverage (also ranks in Steel)" },
+    { name: "Landorus (Therian)", cp: 3729, move: "<b>Mud Shot</b> + <b>Earth Power</b> / Rock Slide", tier: "B", blurb: "Niche but effective — good vs specific cores" },
+    { name: "Rhyperior", cp: 4074, move: "<b>Mud Slap</b> + <b>Rock Wrecker</b> / Earthquake", dupe: "also #2 Rock", tier: "C", blurb: "Rounding out the top 5 — situational or meta-dependent (also ranks in Rock)" },
+  ]},
+  { type: "Flying", color: "#A890F0", icon: "🌪️", picks: [
+    { name: "Ho-Oh", cp: 4650, move: "<b>Incinerate</b> + <b>Sacred Fire</b> ⚡ / Brave Bird", dupe: "also #2 Fire", tier: "S", blurb: "Top Master League pick for this type — strong neutral matchups (uses a Community Day / Elite TM move for its full potential; also ranks in Fire)" },
+    { name: "Yveltal", cp: 4118, move: "<b>Snarl</b> + <b>Dark Pulse</b> / Focus Blast", dupe: "also #1 Dark", tier: "A", blurb: "Excellent Master League closer, right behind the #1 (also ranks in Dark)" },
+    { name: "Togekiss", cp: 3181, move: "<b>Charm</b> + <b>Ancient Power</b> / Dazzling Gleam", dupe: "also #1 Fairy", tier: "A", blurb: "Solid all-rounder with good bulk and coverage (also ranks in Fairy)" },
+    { name: "Lugia", cp: 4186, move: "<b>Dragon Tail</b> + <b>Sky Attack</b> / Future Sight", dupe: "also #3 Psychic", tier: "B", blurb: "Niche but effective — good vs specific cores (also ranks in Psychic)" },
+    { name: "Rayquaza", cp: 4442, move: "<b>Air Slash</b> + <b>Outrage</b> / Ancient Power", tier: "C", blurb: "Rounding out the top 5 — situational or meta-dependent" },
+  ]},
+  { type: "Psychic", color: "#F85888", icon: "🔮", picks: [
+    { name: "Mewtwo", cp: 4780, move: "<b>Confusion</b> + <b>Psystrike</b> ⚡ / Shadow Ball", tier: "S", blurb: "Top Master League pick for this type — strong neutral matchups (uses a Community Day / Elite TM move for its full potential)" },
+    { name: "Metagross", cp: 3706, move: "<b>Bullet Punch</b> + <b>Meteor Mash</b> ⚡ / Psychic", dupe: "also #1 Steel", tier: "A", blurb: "Excellent Master League closer, right behind the #1 (uses a Community Day / Elite TM move for its full potential; also ranks in Steel)" },
+    { name: "Lugia", cp: 4186, move: "<b>Dragon Tail</b> + <b>Sky Attack</b> / Future Sight", dupe: "also #4 Flying", tier: "A", blurb: "Solid all-rounder with good bulk and coverage (also ranks in Flying)" },
+    { name: "Latios", cp: 3327, move: "<b>Dragon Breath</b> + <b>Psychic</b> / Solar Beam", tier: "B", blurb: "Niche but effective — good vs specific cores" },
+    { name: "Cresselia", cp: 3105, move: "<b>Psycho Cut</b> + <b>Grass Knot</b> / Moonblast", tier: "C", blurb: "Rounding out the top 5 — situational or meta-dependent" },
+  ]},
+  { type: "Bug", color: "#A8B820", icon: "🐛", picks: [
+    { name: "Genesect", cp: 3650, move: "<b>Fury Cutter</b> + <b>Techno Blast</b> / X-Scissor", tier: "S", blurb: "Top Master League pick for this type — strong neutral matchups" },
+    { name: "Scizor", cp: 2812, move: "<b>Fury Cutter</b> + <b>Iron Head</b> / X-Scissor", tier: "A", blurb: "Excellent Master League closer, right behind the #1" },
+    { name: "Volcarona", cp: 3211, move: "<b>Fire Spin</b> + <b>Fire Blast</b> / Bug Buzz", tier: "A", blurb: "Solid all-rounder with good bulk and coverage" },
+    { name: "Golisopod", cp: 2681, move: "<b>Fury Cutter</b> + <b>X-Scissor</b> / Aqua Jet", tier: "B", blurb: "Niche but effective — good vs specific cores" },
+    { name: "Escavalier", cp: 2555, move: "<b>Fury Cutter</b> + <b>Megahorn</b> / Drill Run", dupe: "also #4 Steel", tier: "C", blurb: "Rounding out the top 5 — situational or meta-dependent (also ranks in Steel)" },
+  ]},
+  { type: "Rock", color: "#B8A038", icon: "🪨", picks: [
+    { name: "Nihilego", cp: 3616, move: "<b>Poison Jab</b> + <b>Rock Slide</b> / Sludge Bomb", dupe: "also #2 Poison", tier: "S", blurb: "Top Master League pick for this type — strong neutral matchups (also ranks in Poison)" },
+    { name: "Rhyperior", cp: 4074, move: "<b>Mud Slap</b> + <b>Rock Wrecker</b> / Earthquake", dupe: "also #5 Ground", tier: "A", blurb: "Excellent Master League closer, right behind the #1 (also ranks in Ground)" },
+    { name: "Terrakion", cp: 3812, move: "<b>Double Kick</b> ⚡ + <b>Sacred Sword</b> / Rock Slide", dupe: "also #5 Fighting", tier: "A", blurb: "Solid all-rounder with good bulk and coverage (uses a Community Day / Elite TM move for its full potential; also ranks in Fighting)" },
+    { name: "Aggron", cp: 3247, move: "<b>Smack Down</b> + <b>Heavy Slam</b> / Rock Slide", tier: "B", blurb: "Niche but effective — good vs specific cores" },
+    { name: "Regirock", cp: 2854, move: "<b>Rock Throw</b> + <b>Rock Slide</b> / Focus Blast", tier: "C", blurb: "Rounding out the top 5 — situational or meta-dependent" },
+  ]},
+  { type: "Ghost", color: "#705898", icon: "👻", picks: [
+    { name: "Giratina (Origin)", cp: 4143, move: "<b>Shadow Claw</b> + <b>Shadow Ball</b> / Ominous Wind", tier: "S", blurb: "Top Master League pick for this type — strong neutral matchups" },
+    { name: "Chandelure", cp: 3212, move: "<b>Fire Spin</b> + <b>Shadow Ball</b> / Overheat", dupe: "also #5 Fire", tier: "A", blurb: "Excellent Master League closer, right behind the #1 (also ranks in Fire)" },
+    { name: "Golurk", cp: 3067, move: "<b>Mud Slap</b> + <b>Dynamic Punch</b> / Earth Power", tier: "A", blurb: "Solid all-rounder with good bulk and coverage" },
+    { name: "Dusknoir", cp: 2947, move: "<b>Astonish</b> + <b>Shadow Ball</b> / Dynamic Punch", tier: "B", blurb: "Niche but effective — good vs specific cores" },
+    { name: "Giratina (Altered)", cp: 3765, move: "<b>Dragon Breath</b> + <b>Shadow Ball</b> / Dragon Claw", tier: "C", blurb: "Rounding out the top 5 — situational or meta-dependent" },
+  ]},
+  { type: "Dragon", color: "#7038F8", icon: "🐉", picks: [
+    { name: "Reshiram", cp: 4620, move: "<b>Fire Fang</b> + <b>Draco Meteor</b> / Overheat", dupe: "also #1 Fire", tier: "S", blurb: "Top Master League pick for this type — strong neutral matchups (also ranks in Fire)" },
+    { name: "Zekrom", cp: 4620, move: "<b>Charge Beam</b> + <b>Outrage</b> / Wild Charge", dupe: "also #1 Electric", tier: "A", blurb: "Excellent Master League closer, right behind the #1 (also ranks in Electric)" },
+    { name: "Garchomp", cp: 4532, move: "<b>Mud Shot</b> + <b>Outrage</b> / Earth Power", dupe: "also #2 Ground", tier: "A", blurb: "Solid all-rounder with good bulk and coverage (also ranks in Ground)" },
+    { name: "Palkia (Origin)", cp: 4988, move: "<b>Dragon Breath</b> + <b>Draco Meteor</b> / Hydro Pump", dupe: "also #4 Water", tier: "B", blurb: "Niche but effective — good vs specific cores (also ranks in Water)" },
+    { name: "White Kyurem", cp: 5268, move: "<b>Dragon Breath</b> + <b>Outrage</b> / Ice Burn ⚡", dupe: "also #4 Ice", tier: "C", blurb: "Rounding out the top 5 — situational or meta-dependent (uses a Community Day / Elite TM move for its full potential; also ranks in Ice)" },
+  ]},
+  { type: "Dark", color: "#705848", icon: "🌑", picks: [
+    { name: "Yveltal", cp: 4118, move: "<b>Snarl</b> + <b>Dark Pulse</b> / Focus Blast", dupe: "also #2 Flying", tier: "S", blurb: "Top Master League pick for this type — strong neutral matchups (also ranks in Flying)" },
+    { name: "Zarude", cp: 3644, move: "<b>Vine Whip</b> + <b>Darkest Lariat</b> / Power Whip", dupe: "also #1 Grass", tier: "A", blurb: "Excellent Master League closer, right behind the #1 (also ranks in Grass)" },
+    { name: "Weavile", cp: 2637, move: "<b>Snarl</b> + <b>Foul Play</b> / Avalanche", dupe: "also #2 Ice", tier: "A", blurb: "Solid all-rounder with good bulk and coverage (also ranks in Ice)" },
+    { name: "Absol", cp: 2461, move: "<b>Snarl</b> + <b>Payback</b> / Megahorn", tier: "B", blurb: "Niche but effective — good vs specific cores" },
+    { name: "Hydreigon", cp: 3801, move: "<b>Bite</b> + <b>Brutal Swing</b> ⚡ / Dark Pulse", tier: "C", blurb: "Rounding out the top 5 — situational or meta-dependent (uses a Community Day / Elite TM move for its full potential)" },
+  ]},
+  { type: "Steel", color: "#B8B8D0", icon: "⚙️", picks: [
+    { name: "Metagross", cp: 3706, move: "<b>Bullet Punch</b> + <b>Meteor Mash</b> ⚡ / Psychic", dupe: "also #2 Psychic", tier: "S", blurb: "Top Master League pick for this type — strong neutral matchups (uses a Community Day / Elite TM move for its full potential; also ranks in Psychic)" },
+    { name: "Excadrill", cp: 3410, move: "<b>Mud Shot</b> + <b>Drill Run</b> / Rock Slide", dupe: "also #3 Ground", tier: "A", blurb: "Excellent Master League closer, right behind the #1 (also ranks in Ground)" },
+    { name: "Lucario", cp: 3453, move: "<b>Counter</b> ⚡ + <b>Aura Sphere</b> / Shadow Ball", dupe: "also #3 Fighting", tier: "A", blurb: "Solid all-rounder with good bulk and coverage (uses a Community Day / Elite TM move for its full potential; also ranks in Fighting)" },
+    { name: "Escavalier", cp: 2555, move: "<b>Fury Cutter</b> + <b>Megahorn</b> / Drill Run", dupe: "also #5 Bug", tier: "B", blurb: "Niche but effective — good vs specific cores (also ranks in Bug)" },
+    { name: "Dialga (Origin)", cp: 4679, move: "<b>Metal Claw</b> + <b>Iron Head</b> / Draco Meteor", tier: "C", blurb: "Rounding out the top 5 — situational or meta-dependent" },
+  ]},
+  { type: "Fairy", color: "#EE99AC", icon: "✨", picks: [
+    { name: "Togekiss", cp: 3181, move: "<b>Charm</b> + <b>Dazzling Gleam</b> / Ancient Power", dupe: "also #3 Flying", tier: "S", blurb: "Top Master League pick for this type — strong neutral matchups (also ranks in Flying)" },
+    { name: "Xerneas", cp: 3997, move: "<b>Charm</b> + <b>Moonblast</b> / Thunder", tier: "A", blurb: "Excellent Master League closer, right behind the #1" },
+    { name: "Granbull", cp: 2632, move: "<b>Snarl</b> + <b>Play Rough</b> / Close Combat", tier: "A", blurb: "Solid all-rounder with good bulk and coverage" },
+    { name: "Florges", cp: 2500, move: "<b>Fairy Wind</b> + <b>Disarming Voice</b> / Moonblast", tier: "B", blurb: "Niche but effective — good vs specific cores" },
+    { name: "Zacian (Crowned Sword)", cp: 5696, move: "<b>Snarl</b> + <b>Play Rough</b> / Behemoth Blade", tier: "C", blurb: "Rounding out the top 5 — situational or meta-dependent" },
+  ]},
+];
+renderGrid('grid-pve', dataPVE, true, 'pve');
+renderGrid('grid-gl', dataGL, false, 'gl');
+renderGrid('grid-ul', dataUL, false, 'ul');
+renderGrid('grid-ml', dataML, true, 'ml');
+// ---------- Overall (aggregated across all 3 tabs) ----------
+const dataOverall = [{"name": "Tinkaton", "points": 19, "apps": [{"tab": "Great League 1500", "type": "Steel", "rank": 1}, {"tab": "Great League 1500", "type": "Fairy", "rank": 2}, {"tab": "Ultra League 2500", "type": "Steel", "rank": 1}, {"tab": "Ultra League 2500", "type": "Fairy", "rank": 1}]}, {"name": "Cradily", "points": 18, "apps": [{"tab": "Great League 1500", "type": "Grass", "rank": 2}, {"tab": "Great League 1500", "type": "Rock", "rank": 1}, {"tab": "Ultra League 2500", "type": "Grass", "rank": 2}, {"tab": "Ultra League 2500", "type": "Rock", "rank": 1}]}, {"name": "Jellicent", "points": 17, "apps": [{"tab": "Great League 1500", "type": "Water", "rank": 3}, {"tab": "Great League 1500", "type": "Ghost", "rank": 2}, {"tab": "Ultra League 2500", "type": "Water", "rank": 1}, {"tab": "Ultra League 2500", "type": "Ghost", "rank": 1}]}, {"name": "Forretress", "points": 16, "apps": [{"tab": "Great League 1500", "type": "Bug", "rank": 1}, {"tab": "Great League 1500", "type": "Steel", "rank": 3}, {"tab": "Ultra League 2500", "type": "Bug", "rank": 1}, {"tab": "Ultra League 2500", "type": "Steel", "rank": 3}]}, {"name": "Excadrill", "points": 15, "apps": [{"tab": "PvE", "type": "Ground", "rank": 4}, {"tab": "PvE", "type": "Steel", "rank": 4}, {"tab": "Ultra League 2500", "type": "Ground", "rank": 4}, {"tab": "Ultra League 2500", "type": "Steel", "rank": 4}, {"tab": "Master League 10000", "type": "Ground", "rank": 3}, {"tab": "Master League 10000", "type": "Steel", "rank": 2}]}, {"name": "Garchomp", "points": 15, "apps": [{"tab": "PvE", "type": "Ground", "rank": 2}, {"tab": "PvE", "type": "Dragon", "rank": 5}, {"tab": "Ultra League 2500", "type": "Ground", "rank": 5}, {"tab": "Ultra League 2500", "type": "Dragon", "rank": 4}, {"tab": "Master League 10000", "type": "Ground", "rank": 2}, {"tab": "Master League 10000", "type": "Dragon", "rank": 3}]}, {"name": "Metagross", "points": 15, "apps": [{"tab": "PvE", "type": "Psychic", "rank": 4}, {"tab": "PvE", "type": "Steel", "rank": 5}, {"tab": "Ultra League 2500", "type": "Psychic", "rank": 4}, {"tab": "Ultra League 2500", "type": "Steel", "rank": 5}, {"tab": "Master League 10000", "type": "Psychic", "rank": 2}, {"tab": "Master League 10000", "type": "Steel", "rank": 1}]}, {"name": "Nihilego", "points": 14, "apps": [{"tab": "PvE", "type": "Poison", "rank": 4}, {"tab": "PvE", "type": "Rock", "rank": 5}, {"tab": "Ultra League 2500", "type": "Poison", "rank": 4}, {"tab": "Master League 10000", "type": "Poison", "rank": 2}, {"tab": "Master League 10000", "type": "Rock", "rank": 1}]}, {"name": "Swampert", "points": 14, "apps": [{"tab": "PvE", "type": "Ground", "rank": 5}, {"tab": "Ultra League 2500", "type": "Ground", "rank": 2}, {"tab": "Master League 10000", "type": "Water", "rank": 2}, {"tab": "Master League 10000", "type": "Ground", "rank": 1}]}, {"name": "Togekiss", "points": 14, "apps": [{"tab": "PvE", "type": "Flying", "rank": 5}, {"tab": "PvE", "type": "Fairy", "rank": 4}, {"tab": "Ultra League 2500", "type": "Flying", "rank": 3}, {"tab": "Master League 10000", "type": "Flying", "rank": 3}, {"tab": "Master League 10000", "type": "Fairy", "rank": 1}]}, {"name": "Reshiram", "points": 13, "apps": [{"tab": "PvE", "type": "Fire", "rank": 3}, {"tab": "Master League 10000", "type": "Fire", "rank": 1}, {"tab": "Master League 10000", "type": "Dragon", "rank": 1}]}, {"name": "Roserade", "points": 13, "apps": [{"tab": "PvE", "type": "Poison", "rank": 2}, {"tab": "Master League 10000", "type": "Grass", "rank": 2}, {"tab": "Master League 10000", "type": "Poison", "rank": 1}]}, {"name": "Virizion", "points": 13, "apps": [{"tab": "Ultra League 2500", "type": "Grass", "rank": 1}, {"tab": "Ultra League 2500", "type": "Fighting", "rank": 1}, {"tab": "Master League 10000", "type": "Grass", "rank": 5}, {"tab": "Master League 10000", "type": "Fighting", "rank": 4}]}, {"name": "Weavile", "points": 13, "apps": [{"tab": "PvE", "type": "Dark", "rank": 4}, {"tab": "Ultra League 2500", "type": "Ice", "rank": 4}, {"tab": "Ultra League 2500", "type": "Dark", "rank": 4}, {"tab": "Master League 10000", "type": "Ice", "rank": 2}, {"tab": "Master League 10000", "type": "Dark", "rank": 3}]}, {"name": "Yveltal", "points": 13, "apps": [{"tab": "PvE", "type": "Dark", "rank": 2}, {"tab": "Master League 10000", "type": "Flying", "rank": 2}, {"tab": "Master League 10000", "type": "Dark", "rank": 1}]}, {"name": "Corviknight", "points": 12, "apps": [{"tab": "Great League 1500", "type": "Flying", "rank": 3}, {"tab": "Ultra League 2500", "type": "Flying", "rank": 1}, {"tab": "Ultra League 2500", "type": "Steel", "rank": 2}]}, {"name": "Crustle", "points": 12, "apps": [{"tab": "Great League 1500", "type": "Bug", "rank": 3}, {"tab": "Great League 1500", "type": "Rock", "rank": 3}, {"tab": "Ultra League 2500", "type": "Bug", "rank": 3}, {"tab": "Ultra League 2500", "type": "Rock", "rank": 3}]}, {"name": "Kingdra", "points": 12, "apps": [{"tab": "Great League 1500", "type": "Dragon", "rank": 2}, {"tab": "Ultra League 2500", "type": "Water", "rank": 3}, {"tab": "Ultra League 2500", "type": "Dragon", "rank": 2}, {"tab": "Master League 10000", "type": "Water", "rank": 5}]}, {"name": "Malamar", "points": 12, "apps": [{"tab": "Great League 1500", "type": "Psychic", "rank": 3}, {"tab": "Ultra League 2500", "type": "Psychic", "rank": 1}, {"tab": "Ultra League 2500", "type": "Dark", "rank": 2}]}, {"name": "Zarude", "points": 12, "apps": [{"tab": "PvE", "type": "Grass", "rank": 4}, {"tab": "PvE", "type": "Dark", "rank": 5}, {"tab": "Master League 10000", "type": "Grass", "rank": 1}, {"tab": "Master League 10000", "type": "Dark", "rank": 2}]}, {"name": "Zekrom", "points": 12, "apps": [{"tab": "PvE", "type": "Electric", "rank": 3}, {"tab": "Master League 10000", "type": "Electric", "rank": 1}, {"tab": "Master League 10000", "type": "Dragon", "rank": 2}]}, {"name": "Chandelure", "points": 11, "apps": [{"tab": "PvE", "type": "Ghost", "rank": 4}, {"tab": "Ultra League 2500", "type": "Fire", "rank": 4}, {"tab": "Ultra League 2500", "type": "Ghost", "rank": 4}, {"tab": "Master League 10000", "type": "Fire", "rank": 5}, {"tab": "Master League 10000", "type": "Ghost", "rank": 2}]}, {"name": "Empoleon", "points": 11, "apps": [{"tab": "Great League 1500", "type": "Water", "rank": 1}, {"tab": "Great League 1500", "type": "Steel", "rank": 2}, {"tab": "Ultra League 2500", "type": "Water", "rank": 4}]}, {"name": "Ho-Oh", "points": 11, "apps": [{"tab": "PvE", "type": "Flying", "rank": 4}, {"tab": "Master League 10000", "type": "Fire", "rank": 2}, {"tab": "Master League 10000", "type": "Flying", "rank": 1}]}, {"name": "White Kyurem", "points": 11, "apps": [{"tab": "PvE", "type": "Ice", "rank": 1}, {"tab": "PvE", "type": "Dragon", "rank": 3}, {"tab": "Master League 10000", "type": "Ice", "rank": 4}, {"tab": "Master League 10000", "type": "Dragon", "rank": 5}]}, {"name": "Altaria", "points": 10, "apps": [{"tab": "Great League 1500", "type": "Flying", "rank": 1}, {"tab": "Great League 1500", "type": "Dragon", "rank": 1}]}, {"name": "Lickilicky", "points": 10, "apps": [{"tab": "Great League 1500", "type": "Normal", "rank": 1}, {"tab": "Ultra League 2500", "type": "Normal", "rank": 1}]}, {"name": "Medicham", "points": 10, "apps": [{"tab": "Great League 1500", "type": "Fighting", "rank": 1}, {"tab": "Great League 1500", "type": "Psychic", "rank": 1}]}, {"name": "Mega Rayquaza", "points": 10, "apps": [{"tab": "PvE", "type": "Flying", "rank": 1}, {"tab": "PvE", "type": "Dragon", "rank": 1}]}, {"name": "Mimikyu (Busted)", "points": 10, "apps": [{"tab": "Great League 1500", "type": "Ghost", "rank": 1}, {"tab": "Great League 1500", "type": "Fairy", "rank": 1}]}, {"name": "Ninetales", "points": 10, "apps": [{"tab": "Great League 1500", "type": "Fire", "rank": 1}, {"tab": "Ultra League 2500", "type": "Fire", "rank": 1}]}, {"name": "Rhyperior", "points": 10, "apps": [{"tab": "PvE", "type": "Ground", "rank": 3}, {"tab": "Ultra League 2500", "type": "Rock", "rank": 4}, {"tab": "Master League 10000", "type": "Ground", "rank": 5}, {"tab": "Master League 10000", "type": "Rock", "rank": 2}]}, {"name": "Zygarde (Complete)", "points": 10, "apps": [{"tab": "Ultra League 2500", "type": "Ground", "rank": 1}, {"tab": "Ultra League 2500", "type": "Dragon", "rank": 1}]}, {"name": "Charjabug", "points": 9, "apps": [{"tab": "Great League 1500", "type": "Electric", "rank": 1}, {"tab": "Great League 1500", "type": "Bug", "rank": 2}]}, {"name": "Clodsire", "points": 9, "apps": [{"tab": "Great League 1500", "type": "Poison", "rank": 1}, {"tab": "Great League 1500", "type": "Ground", "rank": 2}]}, {"name": "Drapion", "points": 9, "apps": [{"tab": "Great League 1500", "type": "Poison", "rank": 2}, {"tab": "Ultra League 2500", "type": "Poison", "rank": 2}, {"tab": "Master League 10000", "type": "Poison", "rank": 5}]}, {"name": "Genesect", "points": 9, "apps": [{"tab": "PvE", "type": "Bug", "rank": 2}, {"tab": "Master League 10000", "type": "Bug", "rank": 1}]}, {"name": "Hydreigon", "points": 9, "apps": [{"tab": "PvE", "type": "Dark", "rank": 1}, {"tab": "Ultra League 2500", "type": "Dark", "rank": 3}, {"tab": "Master League 10000", "type": "Dark", "rank": 5}]}, {"name": "Jumpluff", "points": 9, "apps": [{"tab": "Great League 1500", "type": "Grass", "rank": 1}, {"tab": "Great League 1500", "type": "Flying", "rank": 2}]}, {"name": "Kyurem", "points": 9, "apps": [{"tab": "PvE", "type": "Ice", "rank": 4}, {"tab": "PvE", "type": "Dragon", "rank": 4}, {"tab": "Master League 10000", "type": "Ice", "rank": 1}]}, {"name": "Lapras", "points": 9, "apps": [{"tab": "Great League 1500", "type": "Ice", "rank": 1}, {"tab": "Ultra League 2500", "type": "Ice", "rank": 2}]}, {"name": "Lucario", "points": 9, "apps": [{"tab": "Great League 1500", "type": "Fighting", "rank": 3}, {"tab": "Master League 10000", "type": "Fighting", "rank": 3}, {"tab": "Master League 10000", "type": "Steel", "rank": 3}]}, {"name": "Machamp", "points": 9, "apps": [{"tab": "PvE", "type": "Fighting", "rank": 4}, {"tab": "Ultra League 2500", "type": "Fighting", "rank": 4}, {"tab": "Master League 10000", "type": "Fighting", "rank": 1}]}, {"name": "Mewtwo", "points": 9, "apps": [{"tab": "PvE", "type": "Psychic", "rank": 2}, {"tab": "Master League 10000", "type": "Psychic", "rank": 1}]}, {"name": "Moltres (Galarian)", "points": 9, "apps": [{"tab": "Ultra League 2500", "type": "Flying", "rank": 2}, {"tab": "Ultra League 2500", "type": "Dark", "rank": 1}]}, {"name": "Quagsire", "points": 9, "apps": [{"tab": "Great League 1500", "type": "Water", "rank": 2}, {"tab": "Great League 1500", "type": "Ground", "rank": 1}]}, {"name": "Raikou", "points": 9, "apps": [{"tab": "PvE", "type": "Electric", "rank": 4}, {"tab": "Ultra League 2500", "type": "Electric", "rank": 2}, {"tab": "Master League 10000", "type": "Electric", "rank": 3}]}, {"name": "Xerneas", "points": 9, "apps": [{"tab": "PvE", "type": "Fairy", "rank": 2}, {"tab": "Ultra League 2500", "type": "Fairy", "rank": 5}, {"tab": "Master League 10000", "type": "Fairy", "rank": 2}]}, {"name": "Feraligatr", "points": 8, "apps": [{"tab": "PvE", "type": "Water", "rank": 5}, {"tab": "Ultra League 2500", "type": "Water", "rank": 2}, {"tab": "Master League 10000", "type": "Water", "rank": 3}]}, {"name": "Giratina (Origin)", "points": 8, "apps": [{"tab": "PvE", "type": "Ghost", "rank": 3}, {"tab": "Master League 10000", "type": "Ghost", "rank": 1}]}, {"name": "Guzzlord", "points": 8, "apps": [{"tab": "Great League 1500", "type": "Dragon", "rank": 3}, {"tab": "Great League 1500", "type": "Dark", "rank": 1}]}, {"name": "Mega Beedrill", "points": 8, "apps": [{"tab": "PvE", "type": "Poison", "rank": 1}, {"tab": "PvE", "type": "Bug", "rank": 3}]}, {"name": "Mega Gengar", "points": 8, "apps": [{"tab": "PvE", "type": "Poison", "rank": 3}, {"tab": "PvE", "type": "Ghost", "rank": 1}]}, {"name": "Ninetales (Alolan)", "points": 8, "apps": [{"tab": "Ultra League 2500", "type": "Ice", "rank": 1}, {"tab": "Ultra League 2500", "type": "Fairy", "rank": 3}]}, {"name": "Oranguru", "points": 8, "apps": [{"tab": "Ultra League 2500", "type": "Normal", "rank": 2}, {"tab": "Ultra League 2500", "type": "Psychic", "rank": 2}]}, {"name": "Snorlax", "points": 8, "apps": [{"tab": "Great League 1500", "type": "Normal", "rank": 5}, {"tab": "Ultra League 2500", "type": "Normal", "rank": 4}, {"tab": "Master League 10000", "type": "Normal", "rank": 1}]}, {"name": "Escavalier", "points": 7, "apps": [{"tab": "Great League 1500", "type": "Bug", "rank": 4}, {"tab": "Ultra League 2500", "type": "Bug", "rank": 4}, {"tab": "Master League 10000", "type": "Bug", "rank": 5}, {"tab": "Master League 10000", "type": "Steel", "rank": 4}]}, {"name": "Giratina (Altered)", "points": 7, "apps": [{"tab": "Ultra League 2500", "type": "Ghost", "rank": 3}, {"tab": "Ultra League 2500", "type": "Dragon", "rank": 3}, {"tab": "Master League 10000", "type": "Ghost", "rank": 5}]}, {"name": "Granbull", "points": 7, "apps": [{"tab": "PvE", "type": "Fairy", "rank": 5}, {"tab": "Great League 1500", "type": "Fairy", "rank": 5}, {"tab": "Ultra League 2500", "type": "Fairy", "rank": 4}, {"tab": "Master League 10000", "type": "Fairy", "rank": 3}]}, {"name": "Kyogre", "points": 7, "apps": [{"tab": "PvE", "type": "Water", "rank": 4}, {"tab": "Master League 10000", "type": "Water", "rank": 1}]}, {"name": "Mega Lucario", "points": 7, "apps": [{"tab": "PvE", "type": "Fighting", "rank": 2}, {"tab": "PvE", "type": "Steel", "rank": 3}]}, {"name": "Talonflame", "points": 7, "apps": [{"tab": "Great League 1500", "type": "Fire", "rank": 2}, {"tab": "Ultra League 2500", "type": "Fire", "rank": 3}]}, {"name": "Turtonator", "points": 7, "apps": [{"tab": "Great League 1500", "type": "Fire", "rank": 3}, {"tab": "Ultra League 2500", "type": "Fire", "rank": 2}]}, {"name": "Walrein", "points": 7, "apps": [{"tab": "PvE", "type": "Ice", "rank": 5}, {"tab": "Ultra League 2500", "type": "Ice", "rank": 3}, {"tab": "Master League 10000", "type": "Ice", "rank": 3}]}, {"name": "Dusknoir", "points": 6, "apps": [{"tab": "Ultra League 2500", "type": "Ghost", "rank": 2}, {"tab": "Master League 10000", "type": "Ghost", "rank": 4}]}, {"name": "Florges", "points": 6, "apps": [{"tab": "Ultra League 2500", "type": "Fairy", "rank": 2}, {"tab": "Master League 10000", "type": "Fairy", "rank": 4}]}, {"name": "Golisopod", "points": 6, "apps": [{"tab": "Ultra League 2500", "type": "Bug", "rank": 2}, {"tab": "Master League 10000", "type": "Bug", "rank": 4}]}, {"name": "Lugia", "points": 6, "apps": [{"tab": "PvE", "type": "Psychic", "rank": 5}, {"tab": "Master League 10000", "type": "Flying", "rank": 4}, {"tab": "Master League 10000", "type": "Psychic", "rank": 3}]}, {"name": "Scizor", "points": 6, "apps": [{"tab": "PvE", "type": "Bug", "rank": 4}, {"tab": "Master League 10000", "type": "Bug", "rank": 2}]}, {"name": "Terrakion", "points": 6, "apps": [{"tab": "PvE", "type": "Rock", "rank": 4}, {"tab": "Master League 10000", "type": "Fighting", "rank": 5}, {"tab": "Master League 10000", "type": "Rock", "rank": 3}]}, {"name": "Xurkitree", "points": 6, "apps": [{"tab": "PvE", "type": "Electric", "rank": 2}, {"tab": "Master League 10000", "type": "Electric", "rank": 4}]}, {"name": "Bastiodon", "points": 5, "apps": [{"tab": "Great League 1500", "type": "Rock", "rank": 2}, {"tab": "Great League 1500", "type": "Steel", "rank": 5}]}, {"name": "Bellibolt", "points": 5, "apps": [{"tab": "Ultra League 2500", "type": "Electric", "rank": 1}]}, {"name": "Conkeldurr", "points": 5, "apps": [{"tab": "PvE", "type": "Fighting", "rank": 5}, {"tab": "Master League 10000", "type": "Fighting", "rank": 2}]}, {"name": "Dialga (Origin)", "points": 5, "apps": [{"tab": "PvE", "type": "Steel", "rank": 2}, {"tab": "Master League 10000", "type": "Steel", "rank": 5}]}, {"name": "Magnezone", "points": 5, "apps": [{"tab": "PvE", "type": "Electric", "rank": 5}, {"tab": "Master League 10000", "type": "Electric", "rank": 2}]}, {"name": "Mega Blaziken", "points": 5, "apps": [{"tab": "PvE", "type": "Fire", "rank": 1}]}, {"name": "Mega Diancie", "points": 5, "apps": [{"tab": "PvE", "type": "Rock", "rank": 1}]}, {"name": "Mega Gardevoir", "points": 5, "apps": [{"tab": "PvE", "type": "Fairy", "rank": 1}]}, {"name": "Mega Lopunny", "points": 5, "apps": [{"tab": "PvE", "type": "Normal", "rank": 1}]}, {"name": "Mega Manectric", "points": 5, "apps": [{"tab": "PvE", "type": "Electric", "rank": 1}]}, {"name": "Mega Metagross", "points": 5, "apps": [{"tab": "PvE", "type": "Steel", "rank": 1}]}, {"name": "Mega Mewtwo X", "points": 5, "apps": [{"tab": "PvE", "type": "Fighting", "rank": 1}]}, {"name": "Mega Mewtwo Y", "points": 5, "apps": [{"tab": "PvE", "type": "Psychic", "rank": 1}]}, {"name": "Mega Pinsir", "points": 5, "apps": [{"tab": "PvE", "type": "Bug", "rank": 1}]}, {"name": "Mega Sceptile", "points": 5, "apps": [{"tab": "PvE", "type": "Grass", "rank": 1}]}, {"name": "Muk (Alolan)", "points": 5, "apps": [{"tab": "Great League 1500", "type": "Poison", "rank": 4}, {"tab": "Ultra League 2500", "type": "Poison", "rank": 5}, {"tab": "Master League 10000", "type": "Poison", "rank": 4}]}, {"name": "Poliwrath", "points": 5, "apps": [{"tab": "Great League 1500", "type": "Fighting", "rank": 2}, {"tab": "Ultra League 2500", "type": "Fighting", "rank": 5}]}, {"name": "Primal Groudon", "points": 5, "apps": [{"tab": "PvE", "type": "Ground", "rank": 1}]}, {"name": "Primal Kyogre", "points": 5, "apps": [{"tab": "PvE", "type": "Water", "rank": 1}]}, {"name": "Regigigas", "points": 5, "apps": [{"tab": "PvE", "type": "Normal", "rank": 5}, {"tab": "Master League 10000", "type": "Normal", "rank": 2}]}, {"name": "Skarmory", "points": 5, "apps": [{"tab": "Great League 1500", "type": "Flying", "rank": 5}, {"tab": "Great League 1500", "type": "Steel", "rank": 4}, {"tab": "Ultra League 2500", "type": "Flying", "rank": 4}]}, {"name": "Tentacruel", "points": 5, "apps": [{"tab": "Ultra League 2500", "type": "Poison", "rank": 1}]}, {"name": "Absol", "points": 4, "apps": [{"tab": "Great League 1500", "type": "Dark", "rank": 5}, {"tab": "Ultra League 2500", "type": "Dark", "rank": 5}, {"tab": "Master League 10000", "type": "Dark", "rank": 4}]}, {"name": "Annihilape", "points": 4, "apps": [{"tab": "Ultra League 2500", "type": "Fighting", "rank": 2}]}, {"name": "Aurorus", "points": 4, "apps": [{"tab": "Ultra League 2500", "type": "Rock", "rank": 2}]}, {"name": "Black Kyurem", "points": 4, "apps": [{"tab": "PvE", "type": "Dragon", "rank": 2}]}, {"name": "Charizard", "points": 4, "apps": [{"tab": "Great League 1500", "type": "Fire", "rank": 5}, {"tab": "Ultra League 2500", "type": "Fire", "rank": 5}, {"tab": "Master League 10000", "type": "Fire", "rank": 4}]}, {"name": "Cresselia", "points": 4, "apps": [{"tab": "Ultra League 2500", "type": "Psychic", "rank": 3}, {"tab": "Master League 10000", "type": "Psychic", "rank": 5}]}, {"name": "Entei", "points": 4, "apps": [{"tab": "PvE", "type": "Fire", "rank": 5}, {"tab": "Master League 10000", "type": "Fire", "rank": 3}]}, {"name": "Fearow", "points": 4, "apps": [{"tab": "Great League 1500", "type": "Normal", "rank": 2}]}, {"name": "Glaceon", "points": 4, "apps": [{"tab": "PvE", "type": "Ice", "rank": 3}, {"tab": "Master League 10000", "type": "Ice", "rank": 5}]}, {"name": "Golurk", "points": 4, "apps": [{"tab": "PvE", "type": "Ghost", "rank": 5}, {"tab": "Master League 10000", "type": "Ghost", "rank": 3}]}, {"name": "Grumpig", "points": 4, "apps": [{"tab": "Great League 1500", "type": "Psychic", "rank": 2}]}, {"name": "Mega Blastoise", "points": 4, "apps": [{"tab": "PvE", "type": "Water", "rank": 2}]}, {"name": "Mega Charizard Y", "points": 4, "apps": [{"tab": "PvE", "type": "Fire", "rank": 2}]}, {"name": "Mega Glalie", "points": 4, "apps": [{"tab": "PvE", "type": "Ice", "rank": 2}]}, {"name": "Mega Tyranitar", "points": 4, "apps": [{"tab": "PvE", "type": "Rock", "rank": 2}]}, {"name": "Mega Venusaur", "points": 4, "apps": [{"tab": "PvE", "type": "Grass", "rank": 2}]}, {"name": "Palkia (Origin)", "points": 4, "apps": [{"tab": "Master League 10000", "type": "Water", "rank": 4}, {"tab": "Master League 10000", "type": "Dragon", "rank": 4}]}, {"name": "Sableye", "points": 4, "apps": [{"tab": "Great League 1500", "type": "Dark", "rank": 2}]}, {"name": "Sealeo", "points": 4, "apps": [{"tab": "Great League 1500", "type": "Ice", "rank": 2}]}, {"name": "Shadow Chandelure", "points": 4, "apps": [{"tab": "PvE", "type": "Ghost", "rank": 2}]}, {"name": "Shadow Moltres", "points": 4, "apps": [{"tab": "PvE", "type": "Flying", "rank": 2}]}, {"name": "Shadow Ursaluna", "points": 4, "apps": [{"tab": "PvE", "type": "Normal", "rank": 2}]}, {"name": "Stunfisk", "points": 4, "apps": [{"tab": "Great League 1500", "type": "Electric", "rank": 2}]}, {"name": "Toxicroak", "points": 4, "apps": [{"tab": "PvE", "type": "Poison", "rank": 5}, {"tab": "Master League 10000", "type": "Poison", "rank": 3}]}, {"name": "Trevenant", "points": 4, "apps": [{"tab": "Great League 1500", "type": "Grass", "rank": 5}, {"tab": "Great League 1500", "type": "Ghost", "rank": 4}, {"tab": "Ultra League 2500", "type": "Ghost", "rank": 5}]}, {"name": "Volcarona", "points": 4, "apps": [{"tab": "PvE", "type": "Bug", "rank": 5}, {"tab": "Master League 10000", "type": "Bug", "rank": 3}]}, {"name": "Zacian (Crowned Sword)", "points": 4, "apps": [{"tab": "PvE", "type": "Fairy", "rank": 3}, {"tab": "Master League 10000", "type": "Fairy", "rank": 5}]}, {"name": "Ampharos", "points": 3, "apps": [{"tab": "Ultra League 2500", "type": "Electric", "rank": 3}]}, {"name": "Avalugg", "points": 3, "apps": [{"tab": "Great League 1500", "type": "Ice", "rank": 4}, {"tab": "Ultra League 2500", "type": "Ice", "rank": 5}]}, {"name": "Azumarill", "points": 3, "apps": [{"tab": "Great League 1500", "type": "Fairy", "rank": 3}]}, {"name": "Blissey", "points": 3, "apps": [{"tab": "Master League 10000", "type": "Normal", "rank": 3}]}, {"name": "Bronzong", "points": 3, "apps": [{"tab": "Great League 1500", "type": "Psychic", "rank": 4}, {"tab": "Ultra League 2500", "type": "Psychic", "rank": 5}]}, {"name": "Cobalion", "points": 3, "apps": [{"tab": "Ultra League 2500", "type": "Fighting", "rank": 3}]}, {"name": "Corsola (Galarian)", "points": 3, "apps": [{"tab": "Great League 1500", "type": "Ghost", "rank": 3}]}, {"name": "Dewgong", "points": 3, "apps": [{"tab": "Great League 1500", "type": "Ice", "rank": 3}]}, {"name": "Diggersby", "points": 3, "apps": [{"tab": "Great League 1500", "type": "Ground", "rank": 3}]}, {"name": "Flygon", "points": 3, "apps": [{"tab": "Great League 1500", "type": "Dragon", "rank": 4}, {"tab": "Ultra League 2500", "type": "Dragon", "rank": 5}]}, {"name": "Furret", "points": 3, "apps": [{"tab": "Great League 1500", "type": "Normal", "rank": 3}]}, {"name": "Golem", "points": 3, "apps": [{"tab": "Great League 1500", "type": "Ground", "rank": 5}, {"tab": "Great League 1500", "type": "Rock", "rank": 4}]}, {"name": "Gourgeist", "points": 3, "apps": [{"tab": "Great League 1500", "type": "Grass", "rank": 3}]}, {"name": "Hippowdon", "points": 3, "apps": [{"tab": "Ultra League 2500", "type": "Ground", "rank": 3}]}, {"name": "Kartana", "points": 3, "apps": [{"tab": "PvE", "type": "Grass", "rank": 5}, {"tab": "Master League 10000", "type": "Grass", "rank": 4}]}, {"name": "Ludicolo", "points": 3, "apps": [{"tab": "Ultra League 2500", "type": "Grass", "rank": 3}]}, {"name": "Mega Alakazam", "points": 3, "apps": [{"tab": "PvE", "type": "Psychic", "rank": 3}]}, {"name": "Mega Gyarados", "points": 3, "apps": [{"tab": "PvE", "type": "Dark", "rank": 3}]}, {"name": "Mega Pidgeot", "points": 3, "apps": [{"tab": "PvE", "type": "Flying", "rank": 3}]}, {"name": "Morpeko (Hangry)", "points": 3, "apps": [{"tab": "Great League 1500", "type": "Electric", "rank": 3}]}, {"name": "Nidoqueen", "points": 3, "apps": [{"tab": "Great League 1500", "type": "Poison", "rank": 3}]}, {"name": "Noctowl", "points": 3, "apps": [{"tab": "Great League 1500", "type": "Flying", "rank": 4}, {"tab": "Ultra League 2500", "type": "Flying", "rank": 5}]}, {"name": "Origin Palkia", "points": 3, "apps": [{"tab": "PvE", "type": "Water", "rank": 3}]}, {"name": "Piloswine", "points": 3, "apps": [{"tab": "Great League 1500", "type": "Ice", "rank": 5}, {"tab": "Great League 1500", "type": "Ground", "rank": 4}]}, {"name": "Politoed", "points": 3, "apps": [{"tab": "Great League 1500", "type": "Water", "rank": 4}, {"tab": "Ultra League 2500", "type": "Water", "rank": 5}]}, {"name": "Rampardos", "points": 3, "apps": [{"tab": "PvE", "type": "Rock", "rank": 3}]}, {"name": "Rillaboom", "points": 3, "apps": [{"tab": "PvE", "type": "Grass", "rank": 3}]}, {"name": "Shadow Machamp", "points": 3, "apps": [{"tab": "PvE", "type": "Fighting", "rank": 3}]}, {"name": "Skuntank", "points": 3, "apps": [{"tab": "Great League 1500", "type": "Poison", "rank": 5}, {"tab": "Great League 1500", "type": "Dark", "rank": 4}]}, {"name": "Slaking", "points": 3, "apps": [{"tab": "PvE", "type": "Normal", "rank": 3}]}, {"name": "Tangrowth", "points": 3, "apps": [{"tab": "Master League 10000", "type": "Grass", "rank": 3}]}, {"name": "Toucannon", "points": 3, "apps": [{"tab": "Ultra League 2500", "type": "Normal", "rank": 3}]}, {"name": "Umbreon", "points": 3, "apps": [{"tab": "Great League 1500", "type": "Dark", "rank": 3}]}, {"name": "Weezing (Galarian)", "points": 3, "apps": [{"tab": "Ultra League 2500", "type": "Poison", "rank": 3}]}, {"name": "Aggron", "points": 2, "apps": [{"tab": "Master League 10000", "type": "Rock", "rank": 4}]}, {"name": "Araquanid", "points": 2, "apps": [{"tab": "Great League 1500", "type": "Bug", "rank": 5}, {"tab": "Ultra League 2500", "type": "Bug", "rank": 5}]}, {"name": "Arcanine", "points": 2, "apps": [{"tab": "Great League 1500", "type": "Fire", "rank": 4}]}, {"name": "Dubwool", "points": 2, "apps": [{"tab": "Great League 1500", "type": "Normal", "rank": 4}]}, {"name": "Electrode", "points": 2, "apps": [{"tab": "Great League 1500", "type": "Electric", "rank": 4}]}, {"name": "Landorus (Therian)", "points": 2, "apps": [{"tab": "Master League 10000", "type": "Ground", "rank": 4}]}, {"name": "Latios", "points": 2, "apps": [{"tab": "Master League 10000", "type": "Psychic", "rank": 4}]}, {"name": "Machoke", "points": 2, "apps": [{"tab": "Great League 1500", "type": "Fighting", "rank": 4}]}, {"name": "Mega Kangaskhan", "points": 2, "apps": [{"tab": "PvE", "type": "Normal", "rank": 4}]}, {"name": "Moltres", "points": 2, "apps": [{"tab": "PvE", "type": "Fire", "rank": 4}]}, {"name": "Porygon-Z", "points": 2, "apps": [{"tab": "Master League 10000", "type": "Normal", "rank": 4}]}, {"name": "Serperior", "points": 2, "apps": [{"tab": "Great League 1500", "type": "Grass", "rank": 4}]}, {"name": "Shuckle", "points": 2, "apps": [{"tab": "Great League 1500", "type": "Rock", "rank": 5}, {"tab": "Ultra League 2500", "type": "Rock", "rank": 5}]}, {"name": "Torterra", "points": 2, "apps": [{"tab": "Ultra League 2500", "type": "Grass", "rank": 4}]}, {"name": "Wigglytuff", "points": 2, "apps": [{"tab": "Great League 1500", "type": "Fairy", "rank": 4}]}, {"name": "Zapdos", "points": 2, "apps": [{"tab": "Ultra League 2500", "type": "Electric", "rank": 4}]}, {"name": "Alomomola", "points": 1, "apps": [{"tab": "Great League 1500", "type": "Water", "rank": 5}]}, {"name": "Claydol", "points": 1, "apps": [{"tab": "Great League 1500", "type": "Psychic", "rank": 5}]}, {"name": "Electivire", "points": 1, "apps": [{"tab": "Ultra League 2500", "type": "Electric", "rank": 5}]}, {"name": "Hariyama", "points": 1, "apps": [{"tab": "Great League 1500", "type": "Fighting", "rank": 5}]}, {"name": "Meganium", "points": 1, "apps": [{"tab": "Ultra League 2500", "type": "Grass", "rank": 5}]}, {"name": "Noivern", "points": 1, "apps": [{"tab": "Great League 1500", "type": "Dragon", "rank": 5}]}, {"name": "Rayquaza", "points": 1, "apps": [{"tab": "Master League 10000", "type": "Flying", "rank": 5}]}, {"name": "Regirock", "points": 1, "apps": [{"tab": "Master League 10000", "type": "Rock", "rank": 5}]}, {"name": "Runerigus", "points": 1, "apps": [{"tab": "Great League 1500", "type": "Ghost", "rank": 5}]}, {"name": "Staraptor", "points": 1, "apps": [{"tab": "Ultra League 2500", "type": "Normal", "rank": 5}]}, {"name": "Thundurus (Therian)", "points": 1, "apps": [{"tab": "Master League 10000", "type": "Electric", "rank": 5}]}, {"name": "Ursaluna", "points": 1, "apps": [{"tab": "Master League 10000", "type": "Normal", "rank": 5}]}, {"name": "Vikavolt", "points": 1, "apps": [{"tab": "Great League 1500", "type": "Electric", "rank": 5}]}];
+const tabAbbrev = { "PvE": "Raids", "Great League 1500": "GL", "Ultra League 2500": "UL", "Master League 10000": "ML" };
+// Build a moveset/CP lookup so the Overall tab can show full detail on expand:
+// key = "<tab>|<type>|<name>" -> { move, cp }
+const moveLookup = {};
+function indexData(tabLabel, dataset, hasCP) {
+  dataset.forEach(d => {
+    d.picks.forEach(p => {
+      moveLookup[`${tabLabel}|${d.type}|${p.name}`] = { move: p.move, cp: hasCP ? p.cp : null };
+    });
+  });
+}
+indexData('PvE', dataPVE, true);
+indexData('Great League 1500', dataGL, false);
+indexData('Ultra League 2500', dataUL, false);
+indexData('Master League 10000', dataML, true);
+// Matching an Overall entry's plain name (no 🅼/🅢/form suffixes) back to the exact
+// picks-array name (which may carry those) for lookup purposes:
+function findPickName(tabLabel, type, plainName) {
+  const dataset = tabLabel === 'PvE' ? dataPVE : (tabLabel === 'Great League 1500' ? dataGL : (tabLabel === 'Ultra League 2500' ? dataUL : dataML));
+  const typeEntry = dataset.find(d => d.type === type);
+  if (!typeEntry) return plainName;
+  const found = typeEntry.picks.find(p => p.name.replace(/\s*(🅼|🅢)\s*/g, '').trim() === plainName);
+  return found ? found.name : plainName;
+}
+// ---------- Overall filters: required tabs + min points ----------
+const activeReqTabs = new Set();
+document.querySelectorAll('.filter-chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    const req = chip.dataset.req;
+    if (activeReqTabs.has(req)) {
+      activeReqTabs.delete(req);
+      chip.classList.remove('active');
+    } else {
+      activeReqTabs.add(req);
+      chip.classList.add('active');
+    }
+    applyOverallFilters();
+  });
+});
+const minPtsInput = document.getElementById('ov-min-pts');
+minPtsInput.addEventListener('input', applyOverallFilters);
+function applyOverallFilters() {
+  const minPts = parseInt(minPtsInput.value, 10) || 0;
+  document.querySelectorAll('#overall-list .ov-row').forEach(row => {
+    const pts = parseInt(row.dataset.points, 10);
+    const rowTabs = row.dataset.tabs.split(',');
+    const meetsReq = [...activeReqTabs].every(t => rowTabs.includes(t));
+    const meetsPts = pts >= minPts;
+    row.classList.toggle('filtered-out', !(meetsReq && meetsPts));
+    row.style.display = (meetsReq && meetsPts) ? '' : 'none';
+  });
+}
+
+// ---------- Grid toggles: shadow/mega + elite-move filter ----------
+const pveToggle = document.getElementById('pve-shadow-mega-toggle');
+const eliteToggle = document.getElementById('elite-move-toggle');
+function applyGridFilters() {
+  const q = searchInput.value.trim().toLowerCase();
+  const showSpecial = pveToggle.checked;
+  const showElite = eliteToggle.checked;
+  ['pve', 'gl', 'ul', 'ml'].forEach(tab => {
+    const grid = document.getElementById('grid-' + tab);
+    if (!grid) return;
+    grid.querySelectorAll('.card').forEach(card => {
+      const items = card.querySelectorAll('li');
+      let anyVisible = false;
+      items.forEach(li => {
+        const matchesSearch = !q || li.dataset.name.includes(q);
+        const matchesSpecial = tab !== 'pve' || showSpecial || li.dataset.specialForm !== '1';
+        const matchesElite = showElite || li.dataset.elite !== '1';
+        const match = matchesSearch && matchesSpecial && matchesElite;
+        li.classList.toggle('hidden-item', !match);
+        if (match) anyVisible = true;
+      });
+      card.classList.toggle('hidden-item', !anyVisible);
+    });
+  });
+}
+pveToggle.addEventListener('change', applyGridFilters);
+eliteToggle.addEventListener('change', applyGridFilters);
+
+// ---------- Search (filters whichever tab is currently active) ----------
+const searchInput = document.getElementById('global-search');
+function applySearch() {
+  const q = searchInput.value.trim().toLowerCase();
+  const activeTab = document.querySelector('.tab-btn.active').dataset.tab;
+  if (activeTab === 'overall') {
+    document.querySelectorAll('#overall-list .ov-row').forEach(row => {
+      const match = !q || row.dataset.name.includes(q);
+      row.classList.toggle('hidden-item', !match);
+    });
+  } else {
+    applyGridFilters();
+  }
+}
+searchInput.addEventListener('input', applySearch);
+applyGridFilters();
+
+// ---------- Overall rendering (supports re-sorting) ----------
+function buildOverallRow(mon, idx) {
+  const row = document.createElement('div');
+  row.className = 'ov-row';
+  row.dataset.name = mon.name.replace(/[^\w\s()]/g, '').trim().toLowerCase();
+  row.dataset.points = mon.points;
+  row.dataset.tabs = mon.apps.map(a => a.tab).join(',');
+  const chips = mon.apps.map(a => `<span class="ov-chip">${tabAbbrev[a.tab]} ${a.type} <b>#${a.rank}</b></span>`).join('');
+  const detailLines = mon.apps.map(a => {
+    const pickName = findPickName(a.tab, a.type, mon.name);
+    const info = moveLookup[`${a.tab}|${a.type}|${pickName}`];
+    const cpPart = info && info.cp ? ` — <b>${info.cp.toLocaleString()} CP</b>` : '';
+    const movePart = info ? info.move : '';
+    return `<div>${tabAbbrev[a.tab]} · ${a.type} #${a.rank}${cpPart}<br>${movePart}</div>`;
+  }).join('');
+  row.innerHTML = `
+    <div class="ov-rank">${idx + 1}</div>
+    <div class="ov-pts">${mon.points}<span>PTS</span></div>
+    <div class="ov-main">
+      <div class="ov-name">${mon.name}</div>
+      <div class="ov-apps">${chips}</div>
+      <div class="ov-detail">${detailLines}</div>
+    </div>
+    <div class="ov-expand-hint">tap ▾</div>
+  `;
+  row.addEventListener('click', () => row.classList.toggle('expanded'));
+  return row;
+}
+function sortOverall(mode) {
+  const arr = dataOverall.slice();
+  if (mode === 'alpha') {
+    arr.sort((a, b) => a.name.localeCompare(b.name));
+  } else if (mode === 'firsts') {
+    arr.sort((a, b) => {
+      const af = a.apps.filter(x => x.rank === 1).length;
+      const bf = b.apps.filter(x => x.rank === 1).length;
+      if (bf !== af) return bf - af;
+      if (b.points !== a.points) return b.points - a.points;
+      return a.name.localeCompare(b.name);
+    });
+  } else {
+    arr.sort((a, b) => (b.points - a.points) || a.name.localeCompare(b.name));
+  }
+  return arr;
+}
+const ovContainer = document.getElementById('overall-list');
+let currentOverallSort = 'points';
+function renderOverallList() {
+  ovContainer.innerHTML = '';
+  const ovWrap = document.createElement('div');
+  ovWrap.className = 'ov-list';
+  sortOverall(currentOverallSort).forEach((mon, idx) => ovWrap.appendChild(buildOverallRow(mon, idx)));
+  ovContainer.appendChild(ovWrap);
+  applySearch();
+  applyOverallFilters();
+}
+document.querySelectorAll('.sort-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentOverallSort = btn.dataset.sort;
+    renderOverallList();
+  });
+});
+renderOverallList();
+
+// ---------- Compact view toggle ----------
+const compactToggle = document.getElementById('compact-view-toggle');
+compactToggle.addEventListener('change', () => {
+  document.querySelectorAll('.grid').forEach(g => g.classList.toggle('compact', compactToggle.checked));
+});
+
+// ---------- Quick-nav (jump to a type) ----------
+function buildQuickNav(navId, data) {
+  const nav = document.getElementById(navId);
+  const shortTab = navId.replace('quicknav-', '');
+  data.forEach(d => {
+    const chip = document.createElement('span');
+    chip.className = 'quicknav-chip';
+    chip.textContent = d.icon;
+    chip.title = d.type;
+    chip.addEventListener('click', () => {
+      const el = document.getElementById(shortTab + '-type-' + d.type);
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+    nav.appendChild(chip);
+  });
+}
+buildQuickNav('quicknav-pve', dataPVE);
+buildQuickNav('quicknav-gl', dataGL);
+buildQuickNav('quicknav-ul', dataUL);
+buildQuickNav('quicknav-ml', dataML);
+
+// ---------- Copy team ----------
+const selectedPicks = new Map();
+const copyBar = document.getElementById('copy-bar');
+const copyBarCount = document.getElementById('copy-bar-count');
+function updateCopyBar() {
+  const n = selectedPicks.size;
+  copyBarCount.textContent = `${n} selected`;
+  copyBar.classList.toggle('visible', n > 0);
+}
+document.querySelectorAll('.pick-select').forEach(cb => {
+  cb.addEventListener('change', () => {
+    const id = cb.dataset.pickId;
+    if (cb.checked) selectedPicks.set(id, cb.dataset.pickLabel);
+    else selectedPicks.delete(id);
+    updateCopyBar();
+  });
+});
+document.getElementById('copy-bar-btn').addEventListener('click', () => {
+  const text = Array.from(selectedPicks.values()).join('\n');
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById('copy-bar-btn');
+    const original = btn.textContent;
+    btn.textContent = 'Copied!';
+    setTimeout(() => { btn.textContent = original; }, 1500);
+  });
+});
+document.getElementById('copy-bar-clear').addEventListener('click', () => {
+  selectedPicks.clear();
+  document.querySelectorAll('.pick-select:checked').forEach(cb => cb.checked = false);
+  updateCopyBar();
+});
+
+// ---------- Back to top ----------
+const backToTop = document.getElementById('back-to-top');
+window.addEventListener('scroll', () => {
+  backToTop.classList.toggle('visible', window.scrollY > 500);
+});
+backToTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+// ---------- Tab switching ----------
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.legend').forEach(l => l.style.display = 'none');
+    btn.classList.add('active');
+    const tab = btn.dataset.tab;
+    document.getElementById('panel-' + tab).classList.add('active');
+    document.getElementById('legend-' + tab).style.display = 'block';
+    const isGridTab = ['pve', 'gl', 'ul', 'ml'].includes(tab);
+    document.getElementById('grid-controls').style.display = isGridTab ? 'flex' : 'none';
+    document.getElementById('pve-shadow-toggle-wrap').style.display = (tab === 'pve') ? 'flex' : 'none';
+    ['pve', 'gl', 'ul', 'ml'].forEach(t => {
+      document.getElementById('quicknav-' + t).style.display = (tab === t) ? 'flex' : 'none';
+    });
+    applySearch();
+  });
+});
+// Initial state: pve tab is active by default
+document.getElementById('grid-controls').style.display = 'flex';
+document.getElementById('pve-shadow-toggle-wrap').style.display = 'flex';
+</script>
+</body>
+</html>
