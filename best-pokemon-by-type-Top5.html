@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Best Pokémon Per Type — Pokémon GO</title>
+<style>
+  :root {
+    --bg: #0e0f14;
+    --card-bg: #181a22;
+    --text: #f2f0e8;
+    --sub: #9a9aa8;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: radial-gradient(circle at top, #1a1c26 0%, #0e0f14 60%);
+    color: var(--text);
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    padding: 24px 14px 60px;
+  }
+  header { text-align: center; margin-bottom: 18px; }
+  header .eyebrow {
+    letter-spacing: 3px;
+    font-size: 11px;
+    color: var(--sub);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  header h1 {
+    font-size: 25px;
+    margin: 0 0 6px;
+    background: linear-gradient(90deg, #ffcb05, #3d7dca);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    font-weight: 800;
+  }
+  header p {
+    color: var(--sub);
+    font-size: 13px;
+    max-width: 480px;
+    margin: 0 auto;
+    line-height: 1.5;
+  }
+  .tabs {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    max-width: 700px;
+    margin: 20px auto 24px;
+    flex-wrap: wrap;
+  }
+  .tab-btn {
+    background: #181a22;
+    color: var(--sub);
+    border: 1px solid rgba(255,255,255,0.08);
+    padding: 9px 16px;
+    border-radius: 22px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all .15s ease;
+  }
+  .tab-btn.active {
+    background: linear-gradient(90deg, #ffcb05, #f0a020);
+    color: #1a1200;
+    border-color: transparent;
+  }
+  .panel { display: none; }
+  .panel.active { display: block; }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+    gap: 12px;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+  .card {
+    background: var(--card-bg);
+    border-radius: 16px;
+    padding: 14px;
+    border: 1px solid rgba(255,255,255,0.06);
+    position: relative;
+    overflow: hidden;
+    transition: transform .15s ease;
+  }
+  .card:active { transform: scale(0.97); }
+  .card::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+    background: var(--tcolor);
+  }
+  .type-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--tcolor);
+    color: rgba(0,0,0,0.75);
+    font-weight: 700;
+    font-size: 12px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    margin-bottom: 10px;
+    text-shadow: none;
+  }
+  .icon { font-size: 15px; }
+  .ranklist { list-style: none; margin: 0; padding: 0; }
+  .ranklist li {
+    display: flex;
+    gap: 8px;
+    padding: 6px 0;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+  .ranklist li:first-child { border-top: none; padding-top: 0; }
+  .rank-num {
+    flex: 0 0 16px;
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--tcolor);
+    padding-top: 2px;
+  }
+  .rank-body .pick {
+    font-size: 13.5px;
+    font-weight: 700;
+    line-height: 1.25;
+    margin-bottom: 1px;
+  }
+  .cp-line {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--tcolor);
+    margin-bottom: 2px;
+  }
+  .dupe-tag {
+    display: inline-block;
+    font-size: 9.5px;
+    font-weight: 600;
+    color: var(--sub);
+    background: rgba(255,255,255,0.06);
+    border-radius: 8px;
+    padding: 1px 6px;
+    margin-top: 2px;
+  }
+  .moveset { font-size: 11px; color: var(--sub); line-height: 1.35; }
+  .moveset b { color: #d7d5cc; font-weight: 600; }
+  .ov-list { max-width: 700px; margin: 0 auto; display: flex; flex-direction: column; gap: 8px; }
+  .ov-row {
+    background: var(--card-bg);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 14px;
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .ov-rank {
+    flex: 0 0 26px;
+    font-size: 12px;
+    font-weight: 800;
+    color: #6a6a78;
+    text-align: center;
+  }
+  .ov-pts {
+    flex: 0 0 54px;
+    text-align: center;
+    font-size: 15px;
+    font-weight: 800;
+    color: #ffcb05;
+  }
+  .ov-pts span { display: block; font-size: 8.5px; color: var(--sub); font-weight: 600; letter-spacing: 1px; }
+  .ov-main { flex: 1; min-width: 0; }
+  .ov-name { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+  .ov-apps { display: flex; flex-wrap: wrap; gap: 5px; }
+  .ov-chip {
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 7px;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.07);
+    color: var(--sub);
+  }
+  .ov-chip b { color: #ffcb05; font-weight: 800; }
+  .legend {
+    max-width: 700px;
+    margin: 34px auto 0;
+    text-align: center;
+    font-size: 11.5px;
+    color: var(--sub);
+    line-height: 1.6;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    padding-top: 16px;
+  }
+  .updated-stamp {
+    font-size: 10.5px;
+    color: #6a6a78;
+    margin-top: 4px;
+  }
+  .tabs {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: #0e0f14;
+    padding: 10px 0 12px;
+    margin: 0 auto 4px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .search-row {
+    max-width: 500px;
+    margin: 0 auto 18px;
+    padding: 0 4px;
+  }
+  .search-input {
+    width: 100%;
+    background: var(--card-bg);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: var(--text);
+    font-size: 13px;
+    padding: 10px 14px;
+    border-radius: 12px;
+    outline: none;
+  }
+  .search-input:focus { border-color: #ffcb05; }
+  .search-input::placeholder { color: #6a6a78; }
+  .pve-controls {
+    max-width: 700px;
+    margin: 0 auto 18px;
+    display: flex;
+    justify-content: center;
+  }
+  .toggle-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11.5px;
+    color: var(--sub);
+    background: var(--card-bg);
+    border: 1px solid rgba(255,255,255,0.08);
+    padding: 6px 12px;
+    border-radius: 20px;
+    cursor: pointer;
+    user-select: none;
+  }
+  .toggle-chip input { accent-color: #ffcb05; }
+  .ov-controls {
+    max-width: 700px;
+    margin: 0 auto 20px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+  }
+  .ov-key {
+    max-width: 700px;
+    margin: 0 auto 14px;
+    text-align: center;
+    font-size: 11px;
+    color: var(--sub);
+  }
+  .ov-key b { color: #ffcb05; }
+  .filter-chip {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--sub);
+    background: var(--card-bg);
+    border: 1px solid rgba(255,255,255,0.08);
+    padding: 6px 12px;
+    border-radius: 18px;
+    cursor: pointer;
+    user-select: none;
+  }
+  .filter-chip.active {
+    background: linear-gradient(90deg, #ffcb05, #f0a020);
+    color: #1a1200;
+    border-color: transparent;
+  }
+  .min-pts-wrap {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: var(--sub);
+    background: var(--card-bg);
+    border: 1px solid rgba(255,255,255,0.08);
+    padding: 4px 10px 4px 12px;
+    border-radius: 18px;
+  }
+  .min-pts-wrap input {
+    width: 44px;
+    background: transparent;
+    border: none;
+    color: var(--text);
+    font-size: 12px;
+    font-weight: 700;
+    outline: none;
+  }
+  .ov-apps { grid-template-columns: 1fr 1fr; display: grid !important; gap: 5px; }
+  .ov-row { cursor: pointer; flex-wrap: wrap; }
+  .ov-row .ov-detail {
+    flex-basis: 100%;
+    display: none;
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    font-size: 11px;
+    color: var(--sub);
+    line-height: 1.6;
+  }
+  .ov-row.expanded .ov-detail { display: block; }
+  .ov-detail div b { color: #d7d5cc; }
+  .ov-expand-hint { font-size: 9px; color: #55555f; margin-left: auto; align-self: center; }
+  .hidden-item { display: none !important; }
+</style>
+</head>
+<body>
+<header>
+  <div class="eyebrow">Raid, Great League & Ultra League Reference</div>
+  <h1>Top 3 By Type</h1>
+  <p>Switch tabs for raid attackers (PvE), Great League (1500 CP), Ultra League (2500 CP), or Master League (open CP) — top 5 picks per type, color-coded and ranked.</p>
+  <div class="updated-stamp">Data snapshot: Aug 24, 2026 — meta shifts with balance updates, so treat this as a current baseline.</div>
+</header>
+<div class="tabs">
+  <button class="tab-btn active" data-tab="pve">⚔️ Raids / PvE</button>
+  <button class="tab-btn" data-tab="gl">🟢 Great League 1500</button>
+  <button class="tab-btn" data-tab="ul">🔵 Ultra League 2500</button>
+  <button class="tab-btn" data-tab="ml">🟣 Master League</button>
+  <button class="tab-btn" data-tab="overall">🏆 Overall</button>
+</div>
+<div class="search-row">
+  <input type="text" class="search-input" id="global-search" placeholder="🔍 Search a Pokémon name...">
+</div>
+<div class="pve-controls" id="pve-controls">
+  <label class="toggle-chip">
+    <input type="checkbox" id="pve-shadow-mega-toggle" checked>
+    Show Shadow & Mega/Primal forms
+  </label>
+</div>
+<div class="panel active" id="panel-pve"><div class="grid" id="grid-pve"></div></div>
+<div class="panel" id="panel-gl"><div class="grid" id="grid-gl"></div></div>
+<div class="panel" id="panel-ul"><div class="grid" id="grid-ul"></div></div>
+<div class="panel" id="panel-ml"><div class="grid" id="grid-ml"></div></div>
+<div class="panel" id="panel-overall">
+  <div class="ov-key">Top 5 per type in every tab: 🥇#1=<b>5pts</b>·🥈#2=<b>4</b>·🥉#3=<b>3</b>·#4=<b>2</b>·#5=<b>1</b> &nbsp;·&nbsp; summed across every appearance</div>
+  <div class="ov-controls">
+    <span class="filter-chip" data-req="PvE">Must be in Raids</span>
+    <span class="filter-chip" data-req="Great League 1500">Must be in GL</span>
+    <span class="filter-chip" data-req="Ultra League 2500">Must be in UL</span>
+    <span class="filter-chip" data-req="Master League 10000">Must be in ML</span>
+    <span class="min-pts-wrap">Min pts <input type="number" id="ov-min-pts" value="0" min="0"></span>
+  </div>
+  <div id="overall-list"></div>
+</div>
+<div class="legend" id="legend-pve">
+  Meta shifts with new Megas, Elite TMs, and events — treat this as a strong current baseline for GO Fest / raid-day prep, not gospel. Now showing the top 5 attackers per type. CP shown is each Pokémon's ceiling: 100% IV (15/15/15), Level 51 via XL Candy + Best Buddy. ⚡ = requires Elite TM · 🅼 = Mega/Primal (team-wide boost, one at a time) · 🅢 = Shadow (+20% dmg, but also +20% dmg taken)
+</div>
+<div class="legend" id="legend-gl" style="display:none">
+  Based on PvPoke's live Great League (1500 CP) overall rankings. Now showing the top 5 per type. Movesets shown are each Pokémon's most-used set in that ranking. 🅢 = Shadow (+20% atk/dmg taken). Some thinner types (Fighting, Poison) lean on established meta picks beyond the top-100 sample.
+</div>
+<div class="legend" id="legend-ul" style="display:none">
+  Based on PvPoke's live Ultra League (2500 CP) overall rankings. Now showing the top 5 per type. Movesets shown are each Pokémon's most-used set in that ranking. 🅢 = Shadow (+20% atk/dmg taken).
+</div>
+<div class="legend" id="legend-ml" style="display:none">
+  Based on PvPoke's live Master League (open CP, no cap) overall rankings. Now showing the top 5 per type. CP shown is each Pokémon's ceiling: 100% IV (15/15/15), Level 51 via XL Candy + Best Buddy. Movesets shown are each Pokémon's most-used set in that ranking. Legendaries, Mega-capable, and max-CP non-legendaries dominate this bracket since there's no CP ceiling to work around.
+</div>
+<div class="legend" id="legend-overall" style="display:none">
+  Every unique Pokémon from the Raids, Great League 1500, Ultra League 2500, and Master League tabs, scored by utility. All four tabs now use the top 5 per type: #1=5 pts, #2=4, #3=3, #4=2, #5=1. Points are summed across every list and type a Pokémon appears in, then sorted highest first.
+</div>
+<script>
+function renderGrid(containerId, data, showCP) {
+  const grid = document.getElementById(containerId);
+  data.forEach(d => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.style.setProperty('--tcolor', d.color);
+    const items = d.picks.map((p, i) => {
+      const isSpecialForm = /🅼|🅢/.test(p.name);
+      const searchName = p.name.replace(/[^\w\s()]/g, '').trim().toLowerCase();
+      return `
+      <li data-name="${searchName}" ${isSpecialForm ? 'data-special-form="1"' : ''}>
+        <span class="rank-num">#${i+1}</span>
+        <span class="rank-body">
+          <div class="pick">${p.name}</div>
+          ${showCP ? `<div class="cp-line">${p.cp.toLocaleString()} CP</div>` : ''}
+          <div class="moveset">${p.move}</div>
+          ${p.dupe ? `<div class="dupe-tag">🔁 ${p.dupe}</div>` : ''}
+        </span>
+      </li>
+    `;
+    }).join('');
+    card.innerHTML = `
+      <div class="type-badge"><span class="icon">${d.icon}</span>${d.type}</div>
+      <ul class="ranklist">${items}</ul>
+    `;
+    grid.appendChild(card);
+  });
+}
+// ---------- PvE / Raids ----------
+const dataPVE = [
+  { type: "Normal", color: "#A8A878", icon: "🐾", picks: [
+    { name: "Mega Lopunny 🅼", cp: 2905, move: "<b>Low Kick</b> + <b>Fire Punch</b>" },
+    { name: "Shadow Ursaluna 🅢", cp: 4820, move: "<b>Tackle</b> + <b>Body Slam</b>" },
+    { name: "Slaking", cp: 5069, move: "<b>Yawn</b> + <b>Body Slam</b>" },
+    { name: "Mega Kangaskhan 🅼", cp: 3813, move: "<b>Mud-Slap</b> + <b>Power-Up Punch</b>" },
+    { name: "Regigigas", cp: 4498, move: "<b>Zen Headbutt</b> + <b>Focus Blast</b>" },
+  ]},
+  { type: "Fire", color: "#F08030", icon: "🔥", picks: [
+    { name: "Mega Blaziken 🅼", cp: 4760, move: "<b>Fire Spin</b> + <b>Blast Burn</b> ⚡" },
+    { name: "Mega Charizard Y 🅼", cp: 5097, move: "<b>Fire Spin</b> + <b>Blast Burn</b> ⚡" },
+    { name: "Reshiram", cp: 4620, move: "<b>Fire Fang</b> + <b>Overheat</b>" },
+    { name: "Moltres", cp: 3826, move: "<b>Fire Spin</b> + <b>Sky Attack</b>" },
+    { name: "Entei", cp: 3844, move: "<b>Fire Fang</b> + <b>Overheat</b>" },
+  ]},
+  { type: "Water", color: "#6890F0", icon: "💧", picks: [
+    { name: "Primal Kyogre 🅼", cp: 6752, move: "<b>Waterfall</b> + <b>Origin Pulse</b>" },
+    { name: "Mega Blastoise 🅼", cp: 4508, move: "<b>Water Gun</b> + <b>Hydro Cannon</b> ⚡" },
+    { name: "Origin Palkia", cp: 4739, move: "<b>Dragon Breath</b> + <b>Hydro Pump</b>" },
+    { name: "Kyogre", cp: 4677, move: "<b>Waterfall</b> + <b>Hydro Pump</b>" },
+    { name: "Feraligatr", cp: 3411, move: "<b>Water Gun</b> + <b>Hydro Cannon</b> ⚡" },
+  ]},
+  { type: "Electric", color: "#F8D030", icon: "⚡", picks: [
+    { name: "Mega Manectric 🅼", cp: 2955, move: "<b>Volt Switch</b> + <b>Wild Charge</b>" },
+    { name: "Xurkitree", cp: 3598, move: "<b>Thunder Shock</b> + <b>Discharge</b>" },
+    { name: "Zekrom", cp: 4620, move: "<b>Charge Beam</b> + <b>Wild Charge</b>" },
+    { name: "Raikou", cp: 3768, move: "<b>Volt Switch</b> + <b>Wild Charge</b>" },
+    { name: "Magnezone", cp: 2673, move: "<b>Spark</b> + <b>Wild Charge</b>" },
+  ]},
+  { type: "Grass", color: "#78C850", icon: "🌿", picks: [
+    { name: "Mega Sceptile 🅼", cp: 4640, move: "<b>Bullet Seed</b> + <b>Frenzy Plant</b> ⚡" },
+    { name: "Mega Venusaur 🅼", cp: 4231, move: "<b>Vine Whip</b> + <b>Frenzy Plant</b> ⚡" },
+    { name: "Rillaboom", cp: 3483, move: "<b>Razor Leaf</b> + <b>Frenzy Plant</b> ⚡" },
+    { name: "Zarude", cp: 3644, move: "<b>Vine Whip</b> + <b>Power Whip</b>", dupe: "also #5 Dark" },
+    { name: "Kartana", cp: 3800, move: "<b>Razor Leaf</b> + <b>Leaf Blade</b>" },
+  ]},
+  { type: "Ice", color: "#98D8D8", icon: "❄️", picks: [
+    { name: "White Kyurem", cp: 5268, move: "<b>Dragon Breath</b> + <b>Ice Burn</b> ⚡", dupe: "also #3 Dragon" },
+    { name: "Mega Glalie 🅼", cp: 3285, move: "<b>Frost Breath</b> + <b>Avalanche</b>" },
+    { name: "Glaceon", cp: 3433, move: "<b>Frost Breath</b> + <b>Avalanche</b>" },
+    { name: "Kyurem", cp: 4103, move: "<b>Dragon Breath</b> + <b>Draco Meteor</b>", dupe: "also #4 Dragon" },
+    { name: "Walrein", cp: 3120, move: "<b>Powder Snow</b> + <b>Icicle Spear</b>" },
+  ]},
+  { type: "Fighting", color: "#C03028", icon: "🥊", picks: [
+    { name: "Mega Mewtwo X 🅼", cp: 6993, move: "<b>Counter</b> ⚡ + <b>Focus Blast</b>" },
+    { name: "Mega Lucario 🅼", cp: 4227, move: "<b>Counter</b> ⚡ + <b>Aura Sphere</b>", dupe: "also #3 Steel" },
+    { name: "Shadow Machamp 🅢", cp: 3824, move: "<b>Counter</b> ⚡ + <b>Dynamic Punch</b>" },
+    { name: "Machamp", cp: 3308, move: "<b>Counter</b> ⚡ + <b>Dynamic Punch</b>" },
+    { name: "Conkeldurr", cp: 3562, move: "<b>Counter</b> ⚡ + <b>Stone Edge</b>" },
+  ]},
+  { type: "Poison", color: "#A040A0", icon: "☠️", picks: [
+    { name: "Mega Beedrill 🅼", cp: 3870, move: "<b>Poison Jab</b> + <b>Sludge Bomb</b>", dupe: "also #3 Bug" },
+    { name: "Roserade", cp: 3403, move: "<b>Poison Jab</b> + <b>Sludge Bomb</b>" },
+    { name: "Mega Gengar 🅼", cp: 4960, move: "<b>Lick</b> + <b>Sludge Bomb</b>", dupe: "also #1 Ghost" },
+    { name: "Nihilego", cp: 3616, move: "<b>Poison Jab</b> + <b>Sludge Bomb</b>", dupe: "also #5 Rock" },
+    { name: "Toxicroak", cp: 2453, move: "<b>Counter</b> ⚡ + <b>Sludge Bomb</b>" },
+  ]},
+  { type: "Ground", color: "#E0C068", icon: "🌍", picks: [
+    { name: "Primal Groudon 🅼", cp: 6752, move: "<b>Mud Shot</b> + <b>Precipice Blades</b>" },
+    { name: "Garchomp", cp: 4532, move: "<b>Mud Shot</b> + <b>Earth Power</b>", dupe: "also #5 Dragon" },
+    { name: "Rhyperior", cp: 4074, move: "<b>Mud Slap</b> + <b>Earthquake</b>" },
+    { name: "Excadrill", cp: 3410, move: "<b>Mud Shot</b> + <b>Drill Run</b>", dupe: "also #4 Steel" },
+    { name: "Swampert", cp: 3390, move: "<b>Mud Shot</b> + <b>Hydro Cannon</b> ⚡" },
+  ]},
+  { type: "Flying", color: "#A890F0", icon: "🌪️", picks: [
+    { name: "Mega Rayquaza 🅼", cp: 6535, move: "<b>Air Slash</b> + <b>Dragon Ascent</b>", dupe: "also #1 Dragon" },
+    { name: "Shadow Moltres 🅢", cp: 4335, move: "<b>Wing Attack</b> + <b>Sky Attack</b>" },
+    { name: "Mega Pidgeot 🅼", cp: 4210, move: "<b>Wing Attack</b> + <b>Brave Bird</b>" },
+    { name: "Ho-Oh", cp: 4650, move: "<b>Incinerate</b> + <b>Sacred Fire</b> ⚡" },
+    { name: "Togekiss", cp: 3181, move: "<b>Charm</b> + <b>Ancient Power</b>", dupe: "also #4 Fairy" },
+  ]},
+  { type: "Psychic", color: "#F85888", icon: "🔮", picks: [
+    { name: "Mega Mewtwo Y 🅼", cp: 7354, move: "<b>Psycho Cut</b> + <b>Psystrike</b> ⚡" },
+    { name: "Mewtwo", cp: 4780, move: "<b>Psycho Cut</b> + <b>Ice Beam</b>" },
+    { name: "Mega Alakazam 🅼", cp: 5160, move: "<b>Confusion</b> + <b>Future Sight</b>" },
+    { name: "Metagross", cp: 3706, move: "<b>Bullet Punch</b> + <b>Psychic</b>", dupe: "also #5 Steel" },
+    { name: "Lugia", cp: 4186, move: "<b>Dragon Tail</b> + <b>Sky Attack</b>" },
+  ]},
+  { type: "Bug", color: "#A8B820", icon: "🐛", picks: [
+    { name: "Mega Pinsir 🅼", cp: 4784, move: "<b>Bug Bite</b> + <b>X-Scissor</b>" },
+    { name: "Genesect", cp: 3650, move: "<b>Fury Cutter</b> + <b>X-Scissor</b>" },
+    { name: "Mega Beedrill 🅼", cp: 3870, move: "<b>Bug Bite</b> + <b>X-Scissor</b>", dupe: "also #1 Poison" },
+    { name: "Scizor", cp: 2812, move: "<b>Fury Cutter</b> + <b>Iron Head</b>" },
+    { name: "Volcarona", cp: 3211, move: "<b>Fire Spin</b> + <b>Bug Buzz</b>" },
+  ]},
+  { type: "Rock", color: "#B8A038", icon: "🪨", picks: [
+    { name: "Mega Diancie 🅼", cp: 4972, move: "<b>Rock Throw</b> + <b>Rock Slide</b>" },
+    { name: "Mega Tyranitar 🅼", cp: 6118, move: "<b>Smack Down</b> + <b>Rock Slide</b>" },
+    { name: "Rampardos", cp: 3336, move: "<b>Smack Down</b> + <b>Rock Slide</b>" },
+    { name: "Terrakion", cp: 3812, move: "<b>Double Kick</b> ⚡ + <b>Sacred Sword</b>" },
+    { name: "Nihilego", cp: 3616, move: "<b>Poison Jab</b> + <b>Rock Slide</b>", dupe: "also #4 Poison" },
+  ]},
+  { type: "Ghost", color: "#705898", icon: "👻", picks: [
+    { name: "Mega Gengar 🅼", cp: 4960, move: "<b>Lick</b> + <b>Shadow Ball</b>", dupe: "also #3 Poison" },
+    { name: "Shadow Chandelure 🅢", cp: 3948, move: "<b>Hex</b> + <b>Shadow Ball</b>" },
+    { name: "Giratina (Origin)", cp: 4143, move: "<b>Shadow Claw</b> + <b>Shadow Ball</b>" },
+    { name: "Chandelure", cp: 3212, move: "<b>Fire Spin</b> + <b>Shadow Ball</b>" },
+    { name: "Golurk", cp: 3067, move: "<b>Mud Slap</b> + <b>Dynamic Punch</b>" },
+  ]},
+  { type: "Dragon", color: "#7038F8", icon: "🐉", picks: [
+    { name: "Mega Rayquaza 🅼", cp: 6535, move: "<b>Dragon Tail</b> + <b>Outrage</b>", dupe: "also #1 Flying" },
+    { name: "Black Kyurem", cp: 5268, move: "<b>Dragon Breath</b> + <b>Outrage</b>" },
+    { name: "White Kyurem", cp: 5268, move: "<b>Dragon Breath</b> + <b>Draco Meteor</b>", dupe: "also #1 Ice" },
+    { name: "Kyurem", cp: 4103, move: "<b>Dragon Breath</b> + <b>Outrage</b>", dupe: "also #4 Ice" },
+    { name: "Garchomp", cp: 4532, move: "<b>Mud Shot</b> + <b>Outrage</b>", dupe: "also #2 Ground" },
+  ]},
+  { type: "Dark", color: "#705848", icon: "🌑", picks: [
+    { name: "Hydreigon", cp: 3801, move: "<b>Bite</b> + <b>Brutal Swing</b> ⚡" },
+    { name: "Yveltal", cp: 4118, move: "<b>Snarl</b> + <b>Dark Pulse</b>" },
+    { name: "Mega Gyarados 🅼", cp: 5396, move: "<b>Bite</b> + <b>Crunch</b>" },
+    { name: "Weavile", cp: 2637, move: "<b>Snarl</b> + <b>Avalanche</b>" },
+    { name: "Zarude", cp: 3644, move: "<b>Vine Whip</b> + <b>Darkest Lariat</b>", dupe: "also #4 Grass" },
+  ]},
+  { type: "Steel", color: "#B8B8D0", icon: "⚙️", picks: [
+    { name: "Mega Metagross 🅼", cp: 5618, move: "<b>Bullet Punch</b> + <b>Meteor Mash</b> ⚡" },
+    { name: "Dialga (Origin)", cp: 4679, move: "<b>Metal Claw</b> + <b>Iron Head</b>" },
+    { name: "Mega Lucario 🅼", cp: 4227, move: "<b>Bullet Punch</b> + <b>Flash Cannon</b>", dupe: "also #2 Fighting" },
+    { name: "Excadrill", cp: 3410, move: "<b>Metal Claw</b> + <b>Iron Head</b>", dupe: "also #4 Ground" },
+    { name: "Metagross", cp: 3706, move: "<b>Bullet Punch</b> + <b>Meteor Mash</b> ⚡", dupe: "also #4 Psychic" },
+  ]},
+  { type: "Fairy", color: "#EE99AC", icon: "✨", picks: [
+    { name: "Mega Gardevoir 🅼", cp: 5162, move: "<b>Charm</b> + <b>Moonblast</b>" },
+    { name: "Xerneas", cp: 3997, move: "<b>Charm</b> + <b>Moonblast</b>" },
+    { name: "Zacian (Crowned Sword)", cp: 5696, move: "<b>Snarl</b> + <b>Play Rough</b>" },
+    { name: "Togekiss", cp: 3181, move: "<b>Charm</b> + <b>Dazzling Gleam</b>", dupe: "also #5 Flying" },
+    { name: "Granbull", cp: 2632, move: "<b>Snarl</b> + <b>Play Rough</b>" },
+  ]},
+];
+// ---------- Great League (1500 CP) ----------
+const dataGL = [
+  { type: "Normal", color: "#A8A878", icon: "🐾", picks: [
+    { name: "Lickilicky", move: "<b>Rollout</b> ⚡ + <b>Body Slam</b> / Shadow Ball" },
+    { name: "Fearow", move: "<b>Peck</b> + <b>Drill Peck</b> / Drill Run" },
+    { name: "Furret", move: "<b>Sucker Punch</b> + <b>Swift</b> / Trailblaze" },
+    { name: "Dubwool", move: "<b>Wool Hex</b> + <b>Body Slam</b> / Superpower" },
+    { name: "Snorlax", move: "<b>Lick</b> + <b>Body Slam</b> / Yawn" },
+  ]},
+  { type: "Fire", color: "#F08030", icon: "🔥", picks: [
+    { name: "Ninetales", move: "<b>Ember</b> + <b>Weather Ball Fire</b> ⚡ / Energy Ball" },
+    { name: "Talonflame", move: "<b>Incinerate</b> + <b>Fly</b> / Brave Bird" },
+    { name: "Turtonator", move: "<b>Incinerate</b> + <b>Brutal Swing</b> / Dragon Claw" },
+    { name: "Arcanine", move: "<b>Snarl</b> + <b>Wild Charge</b> / Flamethrower" },
+    { name: "Charizard", move: "<b>Fire Spin</b> + <b>Blast Burn</b> / Dragon Claw" },
+  ]},
+  { type: "Water", color: "#6890F0", icon: "💧", picks: [
+    { name: "Empoleon", move: "<b>Metal Sound</b> ⚡ + <b>Hydro Cannon</b> ⚡ / Drill Peck" },
+    { name: "Quagsire", move: "<b>Mud Shot</b> + <b>Aqua Tail</b> / Mud Bomb", dupe: "also #1 Ground" },
+    { name: "Jellicent", move: "<b>Hex</b> + <b>Surf</b> / Shadow Ball", dupe: "also #1 Ghost" },
+    { name: "Politoed", move: "<b>Mud Shot</b> + <b>Weather Ball Water</b> / Earthquake" },
+    { name: "Alomomola", move: "<b>Waterfall</b> + <b>Scald</b> / Play Rough" },
+  ]},
+  { type: "Electric", color: "#F8D030", icon: "⚡", picks: [
+    { name: "Charjabug", move: "<b>Volt Switch</b> + <b>X-Scissor</b> / Discharge" },
+    { name: "Stunfisk", move: "<b>Thunder Shock</b> + <b>Mud Bomb</b> / Discharge" },
+    { name: "Morpeko (Hangry)", move: "<b>Thunder Shock</b> + <b>Aura Wheel</b> / Psychic Fangs" },
+    { name: "Electrode", move: "<b>Tackle</b> + <b>Foul Play</b> / Thunderbolt" },
+    { name: "Vikavolt", move: "<b>Spark</b> + <b>Discharge</b> / Crunch" },
+  ]},
+  { type: "Grass", color: "#78C850", icon: "🌿", picks: [
+    { name: "Jumpluff", move: "<b>Fairy Wind</b> + <b>Energy Ball</b> / Acrobatics", dupe: "also #2 Flying" },
+    { name: "Cradily", move: "<b>Acid</b> + <b>Rock Tomb</b> / Grass Knot", dupe: "also #2 Rock" },
+    { name: "Gourgeist", move: "<b>Incinerate</b> + <b>Shadow Ball</b> / Seed Bomb" },
+    { name: "Serperior", move: "<b>Vine Whip</b> + <b>Frenzy Plant</b> ⚡ / Aerial Ace" },
+    { name: "Trevenant", move: "<b>Shadow Claw</b> + <b>Seed Bomb</b> / Foul Play", dupe: "also #4 Ghost" },
+  ]},
+  { type: "Ice", color: "#98D8D8", icon: "❄️", picks: [
+    { name: "Lapras", move: "<b>Psywave</b> ⚡ + <b>Sparkling Aria</b> / Ice Beam" },
+    { name: "Sealeo", move: "<b>Powder Snow</b> + <b>Surf</b> / Body Slam" },
+    { name: "Dewgong", move: "<b>Ice Shard</b> + <b>Icy Wind</b> / Drill Run" },
+    { name: "Avalugg", move: "<b>Ice Fang</b> + <b>Avalanche</b> / Crunch" },
+    { name: "Piloswine", move: "<b>Powder Snow</b> + <b>Avalanche</b> / Bulldoze", dupe: "also #4 Ground" },
+  ]},
+  { type: "Fighting", color: "#C03028", icon: "🥊", picks: [
+    { name: "Medicham", move: "<b>Psycho Cut</b> + <b>Ice Punch</b> / Dynamic Punch", dupe: "also #1 Psychic" },
+    { name: "Poliwrath", move: "<b>Mud Shot</b> + <b>Ice Punch</b> / Power-Up Punch" },
+    { name: "Lucario", move: "<b>Counter</b> ⚡ + <b>Aura Sphere</b> / Power-Up Punch" },
+    { name: "Machoke", move: "<b>Karate Chop</b> + <b>Cross Chop</b> / Brick Break" },
+    { name: "Hariyama", move: "<b>Counter</b> ⚡ + <b>Dynamic Punch</b> / Power-Up Punch" },
+  ]},
+  { type: "Poison", color: "#A040A0", icon: "☠️", picks: [
+    { name: "Clodsire", move: "<b>Poison Sting</b> + <b>Earthquake</b> / Stone Edge", dupe: "also #2 Ground" },
+    { name: "Drapion", move: "<b>Poison Sting</b> + <b>Crunch</b> / Aqua Tail" },
+    { name: "Nidoqueen", move: "<b>Poison Jab</b> + <b>Earth Power</b> / Sludge Wave" },
+    { name: "Muk (Alolan)", move: "<b>Poison Jab</b> + <b>Dark Pulse</b> / Sludge Wave" },
+    { name: "Skuntank", move: "<b>Poison Jab</b> + <b>Crunch</b> / Flamethrower", dupe: "also #4 Dark" },
+  ]},
+  { type: "Ground", color: "#E0C068", icon: "🌍", picks: [
+    { name: "Quagsire", move: "<b>Mud Shot</b> + <b>Aqua Tail</b> / Mud Bomb", dupe: "also #2 Water" },
+    { name: "Clodsire", move: "<b>Poison Sting</b> + <b>Earthquake</b> / Stone Edge", dupe: "also #1 Poison" },
+    { name: "Diggersby", move: "<b>Mud Shot</b> + <b>Fire Punch</b> / Scorching Sands" },
+    { name: "Piloswine", move: "<b>Powder Snow</b> + <b>Avalanche</b> / Bulldoze", dupe: "also #5 Ice" },
+    { name: "Golem", move: "<b>Mud Slap</b> + <b>Earthquake</b> / Rock Blast", dupe: "also #4 Rock" },
+  ]},
+  { type: "Flying", color: "#A890F0", icon: "🌪️", picks: [
+    { name: "Altaria", move: "<b>Dragon Breath</b> + <b>Sky Attack</b> / Flamethrower", dupe: "also #1 Dragon" },
+    { name: "Jumpluff", move: "<b>Fairy Wind</b> + <b>Energy Ball</b> / Acrobatics", dupe: "also #1 Grass" },
+    { name: "Corviknight", move: "<b>Sand Attack</b> ⚡ + <b>Air Cutter</b> / Payback" },
+    { name: "Noctowl", move: "<b>Wing Attack</b> + <b>Sky Attack</b> / Psychic" },
+    { name: "Skarmory", move: "<b>Air Slash</b> + <b>Sky Attack</b> / Flash Cannon", dupe: "also #4 Steel" },
+  ]},
+  { type: "Psychic", color: "#F85888", icon: "🔮", picks: [
+    { name: "Medicham", move: "<b>Psycho Cut</b> + <b>Ice Punch</b> / Dynamic Punch", dupe: "also #1 Fighting" },
+    { name: "Grumpig", move: "<b>Psywave</b> ⚡ + <b>Dynamic Punch</b> / Shadow Ball" },
+    { name: "Malamar", move: "<b>Psywave</b> ⚡ + <b>Super Power</b> / Foul Play" },
+    { name: "Bronzong", move: "<b>Confusion</b> + <b>Psyshock</b> / Heavy Slam" },
+    { name: "Claydol", move: "<b>Confusion</b> + <b>Rock Tomb</b> / Shadow Ball" },
+  ]},
+  { type: "Bug", color: "#A8B820", icon: "🐛", picks: [
+    { name: "Forretress", move: "<b>Volt Switch</b> + <b>Sand Tomb</b> / Rock Tomb" },
+    { name: "Charjabug", move: "<b>Volt Switch</b> + <b>X-Scissor</b> / Discharge", dupe: "also #1 Electric" },
+    { name: "Crustle", move: "<b>Fury Cutter</b> + <b>X-Scissor</b> / Rock Wrecker", dupe: "also #3 Rock" },
+    { name: "Escavalier", move: "<b>Fury Cutter</b> + <b>Megahorn</b> / Drill Run" },
+    { name: "Araquanid", move: "<b>Bug Bite</b> + <b>Bug Buzz</b> / Mirror Coat" },
+  ]},
+  { type: "Rock", color: "#B8A038", icon: "🪨", picks: [
+    { name: "Cradily", move: "<b>Acid</b> + <b>Rock Tomb</b> / Grass Knot", dupe: "also #2 Grass" },
+    { name: "Bastiodon", move: "<b>Smack Down</b> + <b>Stone Edge</b> / Flamethrower", dupe: "also #5 Steel" },
+    { name: "Crustle", move: "<b>Fury Cutter</b> + <b>X-Scissor</b> / Rock Wrecker", dupe: "also #3 Bug" },
+    { name: "Golem", move: "<b>Mud Slap</b> + <b>Earthquake</b> / Rock Blast", dupe: "also #5 Ground" },
+    { name: "Shuckle", move: "<b>Rock Throw</b> + <b>Rock Slide</b> / Gyro Ball" },
+  ]},
+  { type: "Ghost", color: "#705898", icon: "👻", picks: [
+    { name: "Mimikyu (Busted)", move: "<b>Shadow Claw</b> + <b>Shadow Sneak</b> / Play Rough", dupe: "also #1 Fairy" },
+    { name: "Jellicent", move: "<b>Hex</b> + <b>Surf</b> / Shadow Ball", dupe: "also #3 Water" },
+    { name: "Corsola (Galarian)", move: "<b>Astonish</b> + <b>Night Shade</b> / Power Gem" },
+    { name: "Trevenant", move: "<b>Shadow Claw</b> + <b>Seed Bomb</b> / Foul Play", dupe: "also #5 Grass" },
+    { name: "Runerigus", move: "<b>Hex</b> + <b>Shadow Ball</b> / Earthquake" },
+  ]},
+  { type: "Dragon", color: "#7038F8", icon: "🐉", picks: [
+    { name: "Altaria", move: "<b>Dragon Breath</b> + <b>Sky Attack</b> / Flamethrower", dupe: "also #2 Flying" },
+    { name: "Kingdra", move: "<b>Dragon Breath</b> + <b>Surf</b> / Swift" },
+    { name: "Guzzlord", move: "<b>Dragon Tail</b> + <b>Brutal Swing</b> / Sludge Bomb" },
+    { name: "Flygon", move: "<b>Mud Shot</b> + <b>Earth Power</b> / Dragon Claw" },
+    { name: "Noivern", move: "<b>Bite</b> + <b>Draco Meteor</b> / Air Slash" },
+  ]},
+  { type: "Dark", color: "#705848", icon: "🌑", picks: [
+    { name: "Guzzlord", move: "<b>Dragon Tail</b> + <b>Brutal Swing</b> / Sludge Bomb", dupe: "also #3 Dragon" },
+    { name: "Sableye", move: "<b>Shadow Claw</b> + <b>Foul Play</b> / Drain Punch" },
+    { name: "Umbreon", move: "<b>Snarl</b> + <b>Foul Play</b> / Last Resort" },
+    { name: "Skuntank", move: "<b>Poison Jab</b> + <b>Crunch</b> / Flamethrower", dupe: "also #5 Poison" },
+    { name: "Absol", move: "<b>Snarl</b> + <b>Payback</b> / Megahorn" },
+  ]},
+  { type: "Steel", color: "#B8B8D0", icon: "⚙️", picks: [
+    { name: "Tinkaton", move: "<b>Fairy Wind</b> + <b>Gigaton Hammer</b> / Bulldoze", dupe: "also #2 Fairy" },
+    { name: "Empoleon", move: "<b>Metal Sound</b> ⚡ + <b>Hydro Cannon</b> ⚡ / Drill Peck", dupe: "also #1 Water" },
+    { name: "Forretress", move: "<b>Volt Switch</b> + <b>Sand Tomb</b> / Rock Tomb", dupe: "also #1 Bug" },
+    { name: "Skarmory", move: "<b>Air Slash</b> + <b>Sky Attack</b> / Flash Cannon", dupe: "also #5 Flying" },
+    { name: "Bastiodon", move: "<b>Smack Down</b> + <b>Stone Edge</b> / Flamethrower", dupe: "also #2 Rock" },
+  ]},
+  { type: "Fairy", color: "#EE99AC", icon: "✨", picks: [
+    { name: "Mimikyu (Busted)", move: "<b>Shadow Claw</b> + <b>Shadow Sneak</b> / Play Rough", dupe: "also #1 Ghost" },
+    { name: "Tinkaton", move: "<b>Fairy Wind</b> + <b>Gigaton Hammer</b> / Bulldoze", dupe: "also #1 Steel" },
+    { name: "Azumarill", move: "<b>Bubble</b> + <b>Ice Beam</b> / Play Rough" },
+    { name: "Wigglytuff", move: "<b>Charm</b> + <b>Play Rough</b> / Ice Beam" },
+    { name: "Granbull", move: "<b>Snarl</b> + <b>Play Rough</b> / Close Combat" },
+  ]},
+];
+// ---------- Ultra League (2500 CP) ----------
+const dataUL = [
+  { type: "Normal", color: "#A8A878", icon: "🐾", picks: [
+    { name: "Lickilicky", move: "<b>Rollout</b> ⚡ + <b>Body Slam</b> / Shadow Ball" },
+    { name: "Oranguru", move: "<b>Confusion</b> + <b>Brutal Swing</b> / Trailblaze", dupe: "also #2 Psychic" },
+    { name: "Toucannon", move: "<b>Peck</b> + <b>Beak Blast</b> ⚡ / Drill Peck" },
+    { name: "Snorlax", move: "<b>Lick</b> + <b>Body Slam</b> / Yawn" },
+    { name: "Staraptor", move: "<b>Wing Attack</b> + <b>Brave Bird</b> / Close Combat" },
+  ]},
+  { type: "Fire", color: "#F08030", icon: "🔥", picks: [
+    { name: "Ninetales", move: "<b>Ember</b> + <b>Weather Ball Fire</b> ⚡ / Energy Ball" },
+    { name: "Turtonator", move: "<b>Incinerate</b> + <b>Brutal Swing</b> / Dragon Claw" },
+    { name: "Talonflame", move: "<b>Incinerate</b> + <b>Fly</b> / Brave Bird" },
+    { name: "Chandelure", move: "<b>Fire Spin</b> + <b>Shadow Ball</b> / Overheat", dupe: "also #4 Ghost" },
+    { name: "Charizard", move: "<b>Fire Spin</b> + <b>Overheat</b> / Dragon Claw" },
+  ]},
+  { type: "Water", color: "#6890F0", icon: "💧", picks: [
+    { name: "Jellicent", move: "<b>Hex</b> + <b>Surf</b> / Shadow Ball", dupe: "also #1 Ghost" },
+    { name: "Feraligatr", move: "<b>Shadow Claw</b> + <b>Hydro Cannon</b> ⚡ / Ice Beam" },
+    { name: "Kingdra", move: "<b>Dragon Breath</b> + <b>Surf</b> / Swift", dupe: "also #2 Dragon" },
+    { name: "Empoleon", move: "<b>Metal Sound</b> ⚡ + <b>Hydro Cannon</b> ⚡ / Drill Peck" },
+    { name: "Politoed", move: "<b>Mud Shot</b> + <b>Weather Ball Water</b> / Earthquake" },
+  ]},
+  { type: "Electric", color: "#F8D030", icon: "⚡", picks: [
+    { name: "Bellibolt", move: "<b>Sucker Punch</b> + <b>Parabolic Charge</b> / Zap Cannon" },
+    { name: "Raikou", move: "<b>Thunder Shock</b> + <b>Wild Charge</b> / Aura Sphere" },
+    { name: "Ampharos", move: "<b>Volt Switch</b> + <b>Brutal Swing</b> / Trailblaze" },
+    { name: "Zapdos", move: "<b>Thunder Shock</b> + <b>Zap Cannon</b> / Ancient Power" },
+    { name: "Electivire", move: "<b>Thunder Shock</b> + <b>Wild Charge</b> / Ice Punch" },
+  ]},
+  { type: "Grass", color: "#78C850", icon: "🌿", picks: [
+    { name: "Virizion", move: "<b>Double Kick</b> ⚡ + <b>Leaf Blade</b> / Sacred Sword", dupe: "also #1 Fighting" },
+    { name: "Cradily", move: "<b>Acid</b> + <b>Rock Tomb</b> / Grass Knot", dupe: "also #1 Rock" },
+    { name: "Ludicolo", move: "<b>Astonish</b> + <b>Weather Ball Water</b> / Energy Ball" },
+    { name: "Torterra", move: "<b>Razor Leaf</b> + <b>Frenzy Plant</b> ⚡ / Earthquake" },
+    { name: "Meganium", move: "<b>Vine Whip</b> + <b>Frenzy Plant</b> ⚡ / Earthquake" },
+  ]},
+  { type: "Ice", color: "#98D8D8", icon: "❄️", picks: [
+    { name: "Ninetales (Alolan)", move: "<b>Powder Snow</b> + <b>Weather Ball Ice</b> ⚡ / Chilling Water", dupe: "also #3 Fairy" },
+    { name: "Lapras", move: "<b>Psywave</b> ⚡ + <b>Sparkling Aria</b> / Ice Beam" },
+    { name: "Walrein", move: "<b>Powder Snow</b> + <b>Icicle Spear</b> / Earthquake" },
+    { name: "Weavile", move: "<b>Snarl</b> + <b>Avalanche</b> / Foul Play", dupe: "also #4 Dark" },
+    { name: "Avalugg", move: "<b>Ice Fang</b> + <b>Avalanche</b> / Crunch" },
+  ]},
+  { type: "Fighting", color: "#C03028", icon: "🥊", picks: [
+    { name: "Virizion", move: "<b>Double Kick</b> ⚡ + <b>Leaf Blade</b> / Sacred Sword", dupe: "also #1 Grass" },
+    { name: "Annihilape", move: "<b>Low Kick</b> + <b>Rage Fist</b> / Close Combat" },
+    { name: "Cobalion", move: "<b>Double Kick</b> ⚡ + <b>Sacred Sword</b> / Stone Edge" },
+    { name: "Machamp", move: "<b>Counter</b> ⚡ + <b>Dynamic Punch</b> / Cross Chop" },
+    { name: "Poliwrath", move: "<b>Mud Shot</b> + <b>Ice Punch</b> / Power-Up Punch" },
+  ]},
+  { type: "Poison", color: "#A040A0", icon: "☠️", picks: [
+    { name: "Tentacruel", move: "<b>Acid</b> + <b>Scald</b> / Payback" },
+    { name: "Drapion", move: "<b>Poison Sting</b> + <b>Crunch</b> / Aqua Tail" },
+    { name: "Weezing (Galarian)", move: "<b>Fairy Wind</b> + <b>Brutal Swing</b> / Sludge" },
+    { name: "Nihilego", move: "<b>Poison Jab</b> + <b>Rock Slide</b> / Sludge Bomb" },
+    { name: "Muk (Alolan)", move: "<b>Poison Jab</b> + <b>Dark Pulse</b> / Sludge Wave" },
+  ]},
+  { type: "Ground", color: "#E0C068", icon: "🌍", picks: [
+    { name: "Zygarde (Complete)", move: "<b>Dragon Tail</b> + <b>Crunch</b> / Earthquake", dupe: "also #1 Dragon" },
+    { name: "Swampert", move: "<b>Mud Shot</b> + <b>Hydro Cannon</b> ⚡ / Earthquake" },
+    { name: "Hippowdon", move: "<b>Sand Attack</b> ⚡ + <b>Weather Ball Rock</b> / Earth Power" },
+    { name: "Excadrill", move: "<b>Mud Shot</b> + <b>Rock Slide</b> / Drill Run", dupe: "also #4 Steel" },
+    { name: "Garchomp", move: "<b>Mud Shot</b> + <b>Earth Power</b> / Outrage", dupe: "also #4 Dragon" },
+  ]},
+  { type: "Flying", color: "#A890F0", icon: "🌪️", picks: [
+    { name: "Corviknight", move: "<b>Sand Attack</b> ⚡ + <b>Air Cutter</b> / Payback" },
+    { name: "Moltres (Galarian)", move: "<b>Sucker Punch</b> + <b>Fly</b> / Brave Bird", dupe: "also #1 Dark" },
+    { name: "Togekiss", move: "<b>Peck</b> + <b>Psyshock</b> / Aura Sphere" },
+    { name: "Skarmory", move: "<b>Air Slash</b> + <b>Sky Attack</b> / Flash Cannon" },
+    { name: "Noctowl", move: "<b>Wing Attack</b> + <b>Sky Attack</b> / Psychic" },
+  ]},
+  { type: "Psychic", color: "#F85888", icon: "🔮", picks: [
+    { name: "Malamar", move: "<b>Psywave</b> ⚡ + <b>Foul Play</b> / Super Power", dupe: "also #2 Dark" },
+    { name: "Oranguru", move: "<b>Confusion</b> + <b>Brutal Swing</b> / Trailblaze", dupe: "also #2 Normal" },
+    { name: "Cresselia", move: "<b>Psycho Cut</b> + <b>Grass Knot</b> / Moonblast" },
+    { name: "Metagross", move: "<b>Bullet Punch</b> + <b>Psychic</b> / Meteor Mash ⚡", dupe: "also #5 Steel" },
+    { name: "Bronzong", move: "<b>Confusion</b> + <b>Psyshock</b> / Heavy Slam" },
+  ]},
+  { type: "Bug", color: "#A8B820", icon: "🐛", picks: [
+    { name: "Forretress", move: "<b>Volt Switch</b> + <b>Rock Tomb</b> / Sand Tomb", dupe: "also #3 Steel" },
+    { name: "Golisopod", move: "<b>Fury Cutter</b> + <b>X-Scissor</b> / Aqua Jet" },
+    { name: "Crustle", move: "<b>Fury Cutter</b> + <b>X-Scissor</b> / Rock Wrecker", dupe: "also #3 Rock" },
+    { name: "Escavalier", move: "<b>Fury Cutter</b> + <b>Megahorn</b> / Drill Run" },
+    { name: "Araquanid", move: "<b>Bug Bite</b> + <b>Bug Buzz</b> / Mirror Coat" },
+  ]},
+  { type: "Rock", color: "#B8A038", icon: "🪨", picks: [
+    { name: "Cradily", move: "<b>Acid</b> + <b>Rock Tomb</b> / Grass Knot", dupe: "also #2 Grass" },
+    { name: "Aurorus", move: "<b>Powder Snow</b> + <b>Weather Ball Ice</b> ⚡ / Meteor Beam" },
+    { name: "Crustle", move: "<b>Fury Cutter</b> + <b>X-Scissor</b> / Rock Wrecker", dupe: "also #3 Bug" },
+    { name: "Rhyperior", move: "<b>Mud Slap</b> + <b>Rock Wrecker</b> / Earthquake" },
+    { name: "Shuckle", move: "<b>Rock Throw</b> + <b>Rock Slide</b> / Gyro Ball" },
+  ]},
+  { type: "Ghost", color: "#705898", icon: "👻", picks: [
+    { name: "Jellicent", move: "<b>Hex</b> + <b>Surf</b> / Shadow Ball", dupe: "also #1 Water" },
+    { name: "Dusknoir", move: "<b>Astonish</b> + <b>Dynamic Punch</b> / Shadow Punch" },
+    { name: "Giratina (Altered)", move: "<b>Dragon Breath</b> + <b>Dragon Claw</b> / Shadow Sneak", dupe: "also #3 Dragon" },
+    { name: "Chandelure", move: "<b>Fire Spin</b> + <b>Shadow Ball</b> / Overheat", dupe: "also #4 Fire" },
+    { name: "Trevenant", move: "<b>Shadow Claw</b> + <b>Seed Bomb</b> / Foul Play" },
+  ]},
+  { type: "Dragon", color: "#7038F8", icon: "🐉", picks: [
+    { name: "Zygarde (Complete)", move: "<b>Dragon Tail</b> + <b>Crunch</b> / Earthquake", dupe: "also #1 Ground" },
+    { name: "Kingdra", move: "<b>Dragon Breath</b> + <b>Surf</b> / Swift", dupe: "also #3 Water" },
+    { name: "Giratina (Altered)", move: "<b>Dragon Breath</b> + <b>Dragon Claw</b> / Shadow Sneak", dupe: "also #3 Ghost" },
+    { name: "Garchomp", move: "<b>Mud Shot</b> + <b>Outrage</b> / Earth Power", dupe: "also #5 Ground" },
+    { name: "Flygon", move: "<b>Mud Shot</b> + <b>Earth Power</b> / Dragon Claw" },
+  ]},
+  { type: "Dark", color: "#705848", icon: "🌑", picks: [
+    { name: "Moltres (Galarian)", move: "<b>Sucker Punch</b> + <b>Fly</b> / Brave Bird", dupe: "also #2 Flying" },
+    { name: "Malamar", move: "<b>Psywave</b> ⚡ + <b>Foul Play</b> / Super Power", dupe: "also #1 Psychic" },
+    { name: "Hydreigon", move: "<b>Dragon Breath</b> + <b>Brutal Swing</b> / Fly" },
+    { name: "Weavile", move: "<b>Snarl</b> + <b>Foul Play</b> / Avalanche", dupe: "also #4 Ice" },
+    { name: "Absol", move: "<b>Snarl</b> + <b>Payback</b> / Megahorn" },
+  ]},
+  { type: "Steel", color: "#B8B8D0", icon: "⚙️", picks: [
+    { name: "Tinkaton", move: "<b>Fairy Wind</b> + <b>Gigaton Hammer</b> / Bulldoze", dupe: "also #1 Fairy" },
+    { name: "Corviknight", move: "<b>Sand Attack</b> ⚡ + <b>Air Cutter</b> / Payback", dupe: "also #1 Flying" },
+    { name: "Forretress", move: "<b>Volt Switch</b> + <b>Rock Tomb</b> / Sand Tomb", dupe: "also #1 Bug" },
+    { name: "Excadrill", move: "<b>Mud Shot</b> + <b>Drill Run</b> / Rock Slide", dupe: "also #4 Ground" },
+    { name: "Metagross", move: "<b>Bullet Punch</b> + <b>Meteor Mash</b> ⚡ / Psychic", dupe: "also #4 Psychic" },
+  ]},
+  { type: "Fairy", color: "#EE99AC", icon: "✨", picks: [
+    { name: "Tinkaton", move: "<b>Fairy Wind</b> + <b>Gigaton Hammer</b> / Bulldoze", dupe: "also #1 Steel" },
+    { name: "Florges", move: "<b>Fairy Wind</b> + <b>Chilling Water</b> / Disarming Voice" },
+    { name: "Ninetales (Alolan)", move: "<b>Powder Snow</b> + <b>Weather Ball Ice</b> ⚡ / Chilling Water", dupe: "also #1 Ice" },
+    { name: "Granbull", move: "<b>Snarl</b> + <b>Play Rough</b> / Close Combat" },
+    { name: "Xerneas", move: "<b>Charm</b> + <b>Moonblast</b> / Thunder" },
+  ]},
+];
+// ---------- Master League (Open CP, no cap) ----------
+const dataML = [
+  { type: "Normal", color: "#A8A878", icon: "🐾", picks: [
+    { name: "Snorlax", cp: 3980, move: "<b>Lick</b> + <b>Body Slam</b> / Heavy Slam" },
+    { name: "Regigigas", cp: 4498, move: "<b>Zen Headbutt</b> + <b>Thunder</b> / Focus Blast" },
+    { name: "Blissey", cp: 3016, move: "<b>Zen Headbutt</b> + <b>Dazzling Gleam</b> / Psychic" },
+    { name: "Porygon-Z", cp: 3620, move: "<b>Hidden Power</b> + <b>Tri Attack</b> / Zap Cannon" },
+    { name: "Ursaluna", cp: 4149, move: "<b>Take Down</b> + <b>Earthquake</b> / High Horsepower" },
+  ]},
+  { type: "Fire", color: "#F08030", icon: "🔥", picks: [
+    { name: "Reshiram", cp: 4620, move: "<b>Fire Fang</b> + <b>Overheat</b> / Draco Meteor", dupe: "also #1 Dragon" },
+    { name: "Ho-Oh", cp: 4650, move: "<b>Incinerate</b> + <b>Sacred Fire</b> ⚡ / Brave Bird", dupe: "also #1 Flying" },
+    { name: "Entei", cp: 3844, move: "<b>Fire Fang</b> + <b>Overheat</b> / Iron Head" },
+    { name: "Charizard", cp: 3776, move: "<b>Fire Spin</b> + <b>Blast Burn</b> ⚡ / Dragon Claw" },
+    { name: "Chandelure", cp: 3212, move: "<b>Fire Spin</b> + <b>Overheat</b> / Shadow Ball", dupe: "also #2 Ghost" },
+  ]},
+  { type: "Water", color: "#6890F0", icon: "💧", picks: [
+    { name: "Kyogre", cp: 4677, move: "<b>Waterfall</b> + <b>Hydro Pump</b> / Blizzard" },
+    { name: "Swampert", cp: 3390, move: "<b>Mud Shot</b> + <b>Hydro Cannon</b> ⚡ / Earthquake", dupe: "also #1 Ground" },
+    { name: "Feraligatr", cp: 3411, move: "<b>Waterfall</b> + <b>Hydro Cannon</b> ⚡ / Ice Beam" },
+    { name: "Palkia (Origin)", cp: 4988, move: "<b>Dragon Breath</b> + <b>Hydro Pump</b> / Draco Meteor", dupe: "also #4 Dragon" },
+    { name: "Kingdra", cp: 3164, move: "<b>Dragon Breath</b> + <b>Outrage</b> / Surf" },
+  ]},
+  { type: "Electric", color: "#F8D030", icon: "⚡", picks: [
+    { name: "Zekrom", cp: 4620, move: "<b>Charge Beam</b> + <b>Wild Charge</b> / Outrage", dupe: "also #2 Dragon" },
+    { name: "Magnezone", cp: 2673, move: "<b>Spark</b> + <b>Wild Charge</b> / Mirror Shot" },
+    { name: "Raikou", cp: 3768, move: "<b>Volt Switch</b> + <b>Wild Charge</b> / Shadow Ball" },
+    { name: "Xurkitree", cp: 3598, move: "<b>Thunder Shock</b> + <b>Discharge</b> / Dazzling Gleam" },
+    { name: "Thundurus (Therian)", cp: 3467, move: "<b>Volt Switch</b> + <b>Thunder</b> / Focus Blast" },
+  ]},
+  { type: "Grass", color: "#78C850", icon: "🌿", picks: [
+    { name: "Zarude", cp: 3644, move: "<b>Vine Whip</b> + <b>Power Whip</b> / Darkest Lariat", dupe: "also #2 Dark" },
+    { name: "Roserade", cp: 3403, move: "<b>Poison Jab</b> + <b>Weather Ball Poison</b> / Sludge Bomb", dupe: "also #1 Poison" },
+    { name: "Tangrowth", cp: 3427, move: "<b>Vine Whip</b> + <b>Power Whip</b> / Rock Slide" },
+    { name: "Kartana", cp: 3800, move: "<b>Razor Leaf</b> + <b>Leaf Blade</b> / X-Scissor" },
+    { name: "Virizion", cp: 3169, move: "<b>Double Kick</b> ⚡ + <b>Leaf Blade</b> / Sacred Sword", dupe: "also #4 Fighting" },
+  ]},
+  { type: "Ice", color: "#98D8D8", icon: "❄️", picks: [
+    { name: "Kyurem", cp: 4103, move: "<b>Dragon Breath</b> + <b>Draco Meteor</b> / Ice Beam" },
+    { name: "Weavile", cp: 2637, move: "<b>Snarl</b> + <b>Avalanche</b> / Foul Play", dupe: "also #3 Dark" },
+    { name: "Walrein", cp: 3120, move: "<b>Powder Snow</b> + <b>Icicle Spear</b> / Earthquake" },
+    { name: "White Kyurem", cp: 5268, move: "<b>Dragon Breath</b> + <b>Ice Burn</b> ⚡ / Draco Meteor", dupe: "also #5 Dragon" },
+    { name: "Glaceon", cp: 3433, move: "<b>Frost Breath</b> + <b>Avalanche</b> / Water Pulse" },
+  ]},
+  { type: "Fighting", color: "#C03028", icon: "🥊", picks: [
+    { name: "Machamp", cp: 3308, move: "<b>Counter</b> ⚡ + <b>Cross Chop</b> / Rock Slide" },
+    { name: "Conkeldurr", cp: 3562, move: "<b>Counter</b> ⚡ + <b>Dynamic Punch</b> / Stone Edge" },
+    { name: "Lucario", cp: 3453, move: "<b>Counter</b> ⚡ + <b>Aura Sphere</b> / Shadow Ball", dupe: "also #3 Steel" },
+    { name: "Virizion", cp: 3169, move: "<b>Double Kick</b> ⚡ + <b>Leaf Blade</b> / Sacred Sword", dupe: "also #5 Grass" },
+    { name: "Terrakion", cp: 3812, move: "<b>Double Kick</b> ⚡ + <b>Sacred Sword</b> / Rock Slide", dupe: "also #3 Rock" },
+  ]},
+  { type: "Poison", color: "#A040A0", icon: "☠️", picks: [
+    { name: "Roserade", cp: 3403, move: "<b>Poison Jab</b> + <b>Weather Ball Poison</b> / Sludge Bomb", dupe: "also #2 Grass" },
+    { name: "Nihilego", cp: 3616, move: "<b>Poison Jab</b> + <b>Rock Slide</b> / Sludge Bomb", dupe: "also #1 Rock" },
+    { name: "Toxicroak", cp: 2453, move: "<b>Counter</b> ⚡ + <b>Sludge Bomb</b> / Mud Bomb" },
+    { name: "Muk (Alolan)", cp: 2465, move: "<b>Poison Jab</b> + <b>Dark Pulse</b> / Sludge Wave" },
+    { name: "Drapion", cp: 2422, move: "<b>Poison Sting</b> + <b>Crunch</b> / Aqua Tail" },
+  ]},
+  { type: "Ground", color: "#E0C068", icon: "🌍", picks: [
+    { name: "Swampert", cp: 3390, move: "<b>Mud Shot</b> + <b>Hydro Cannon</b> ⚡ / Earthquake", dupe: "also #2 Water" },
+    { name: "Garchomp", cp: 4532, move: "<b>Mud Shot</b> + <b>Outrage</b> / Earth Power", dupe: "also #3 Dragon" },
+    { name: "Excadrill", cp: 3410, move: "<b>Mud Shot</b> + <b>Rock Slide</b> / Drill Run", dupe: "also #2 Steel" },
+    { name: "Landorus (Therian)", cp: 3729, move: "<b>Mud Shot</b> + <b>Earth Power</b> / Rock Slide" },
+    { name: "Rhyperior", cp: 4074, move: "<b>Mud Slap</b> + <b>Rock Wrecker</b> / Earthquake", dupe: "also #2 Rock" },
+  ]},
+  { type: "Flying", color: "#A890F0", icon: "🌪️", picks: [
+    { name: "Ho-Oh", cp: 4650, move: "<b>Incinerate</b> + <b>Sacred Fire</b> ⚡ / Brave Bird", dupe: "also #2 Fire" },
+    { name: "Yveltal", cp: 4118, move: "<b>Snarl</b> + <b>Dark Pulse</b> / Focus Blast", dupe: "also #1 Dark" },
+    { name: "Togekiss", cp: 3181, move: "<b>Charm</b> + <b>Ancient Power</b> / Dazzling Gleam", dupe: "also #1 Fairy" },
+    { name: "Lugia", cp: 4186, move: "<b>Dragon Tail</b> + <b>Sky Attack</b> / Future Sight", dupe: "also #3 Psychic" },
+    { name: "Rayquaza", cp: 4442, move: "<b>Air Slash</b> + <b>Outrage</b> / Ancient Power" },
+  ]},
+  { type: "Psychic", color: "#F85888", icon: "🔮", picks: [
+    { name: "Mewtwo", cp: 4780, move: "<b>Confusion</b> + <b>Psystrike</b> ⚡ / Shadow Ball" },
+    { name: "Metagross", cp: 3706, move: "<b>Bullet Punch</b> + <b>Meteor Mash</b> ⚡ / Psychic", dupe: "also #1 Steel" },
+    { name: "Lugia", cp: 4186, move: "<b>Dragon Tail</b> + <b>Sky Attack</b> / Future Sight", dupe: "also #4 Flying" },
+    { name: "Latios", cp: 3327, move: "<b>Dragon Breath</b> + <b>Psychic</b> / Solar Beam" },
+    { name: "Cresselia", cp: 3105, move: "<b>Psycho Cut</b> + <b>Grass Knot</b> / Moonblast" },
+  ]},
+  { type: "Bug", color: "#A8B820", icon: "🐛", picks: [
+    { name: "Genesect", cp: 3650, move: "<b>Fury Cutter</b> + <b>Techno Blast</b> / X-Scissor" },
+    { name: "Scizor", cp: 2812, move: "<b>Fury Cutter</b> + <b>Iron Head</b> / X-Scissor" },
+    { name: "Volcarona", cp: 3211, move: "<b>Fire Spin</b> + <b>Fire Blast</b> / Bug Buzz" },
+    { name: "Golisopod", cp: 2681, move: "<b>Fury Cutter</b> + <b>X-Scissor</b> / Aqua Jet" },
+    { name: "Escavalier", cp: 2555, move: "<b>Fury Cutter</b> + <b>Megahorn</b> / Drill Run", dupe: "also #4 Steel" },
+  ]},
+  { type: "Rock", color: "#B8A038", icon: "🪨", picks: [
+    { name: "Nihilego", cp: 3616, move: "<b>Poison Jab</b> + <b>Rock Slide</b> / Sludge Bomb", dupe: "also #2 Poison" },
+    { name: "Rhyperior", cp: 4074, move: "<b>Mud Slap</b> + <b>Rock Wrecker</b> / Earthquake", dupe: "also #5 Ground" },
+    { name: "Terrakion", cp: 3812, move: "<b>Double Kick</b> ⚡ + <b>Sacred Sword</b> / Rock Slide", dupe: "also #5 Fighting" },
+    { name: "Aggron", cp: 3247, move: "<b>Smack Down</b> + <b>Heavy Slam</b> / Rock Slide" },
+    { name: "Regirock", cp: 2854, move: "<b>Rock Throw</b> + <b>Rock Slide</b> / Focus Blast" },
+  ]},
+  { type: "Ghost", color: "#705898", icon: "👻", picks: [
+    { name: "Giratina (Origin)", cp: 4143, move: "<b>Shadow Claw</b> + <b>Shadow Ball</b> / Ominous Wind" },
+    { name: "Chandelure", cp: 3212, move: "<b>Fire Spin</b> + <b>Shadow Ball</b> / Overheat", dupe: "also #5 Fire" },
+    { name: "Golurk", cp: 3067, move: "<b>Mud Slap</b> + <b>Dynamic Punch</b> / Earth Power" },
+    { name: "Dusknoir", cp: 2947, move: "<b>Astonish</b> + <b>Shadow Ball</b> / Dynamic Punch" },
+    { name: "Giratina (Altered)", cp: 3765, move: "<b>Dragon Breath</b> + <b>Shadow Ball</b> / Dragon Claw" },
+  ]},
+  { type: "Dragon", color: "#7038F8", icon: "🐉", picks: [
+    { name: "Reshiram", cp: 4620, move: "<b>Fire Fang</b> + <b>Draco Meteor</b> / Overheat", dupe: "also #1 Fire" },
+    { name: "Zekrom", cp: 4620, move: "<b>Charge Beam</b> + <b>Outrage</b> / Wild Charge", dupe: "also #1 Electric" },
+    { name: "Garchomp", cp: 4532, move: "<b>Mud Shot</b> + <b>Outrage</b> / Earth Power", dupe: "also #2 Ground" },
+    { name: "Palkia (Origin)", cp: 4988, move: "<b>Dragon Breath</b> + <b>Draco Meteor</b> / Hydro Pump", dupe: "also #4 Water" },
+    { name: "White Kyurem", cp: 5268, move: "<b>Dragon Breath</b> + <b>Outrage</b> / Ice Burn ⚡", dupe: "also #4 Ice" },
+  ]},
+  { type: "Dark", color: "#705848", icon: "🌑", picks: [
+    { name: "Yveltal", cp: 4118, move: "<b>Snarl</b> + <b>Dark Pulse</b> / Focus Blast", dupe: "also #2 Flying" },
+    { name: "Zarude", cp: 3644, move: "<b>Vine Whip</b> + <b>Darkest Lariat</b> / Power Whip", dupe: "also #1 Grass" },
+    { name: "Weavile", cp: 2637, move: "<b>Snarl</b> + <b>Foul Play</b> / Avalanche", dupe: "also #2 Ice" },
+    { name: "Absol", cp: 2461, move: "<b>Snarl</b> + <b>Payback</b> / Megahorn" },
+    { name: "Hydreigon", cp: 3801, move: "<b>Bite</b> + <b>Brutal Swing</b> ⚡ / Dark Pulse" },
+  ]},
+  { type: "Steel", color: "#B8B8D0", icon: "⚙️", picks: [
+    { name: "Metagross", cp: 3706, move: "<b>Bullet Punch</b> + <b>Meteor Mash</b> ⚡ / Psychic", dupe: "also #2 Psychic" },
+    { name: "Excadrill", cp: 3410, move: "<b>Mud Shot</b> + <b>Drill Run</b> / Rock Slide", dupe: "also #3 Ground" },
+    { name: "Lucario", cp: 3453, move: "<b>Counter</b> ⚡ + <b>Aura Sphere</b> / Shadow Ball", dupe: "also #3 Fighting" },
+    { name: "Escavalier", cp: 2555, move: "<b>Fury Cutter</b> + <b>Megahorn</b> / Drill Run", dupe: "also #5 Bug" },
+    { name: "Dialga (Origin)", cp: 4679, move: "<b>Metal Claw</b> + <b>Iron Head</b> / Draco Meteor" },
+  ]},
+  { type: "Fairy", color: "#EE99AC", icon: "✨", picks: [
+    { name: "Togekiss", cp: 3181, move: "<b>Charm</b> + <b>Dazzling Gleam</b> / Ancient Power", dupe: "also #3 Flying" },
+    { name: "Xerneas", cp: 3997, move: "<b>Charm</b> + <b>Moonblast</b> / Thunder" },
+    { name: "Granbull", cp: 2632, move: "<b>Snarl</b> + <b>Play Rough</b> / Close Combat" },
+    { name: "Florges", cp: 2500, move: "<b>Fairy Wind</b> + <b>Disarming Voice</b> / Moonblast" },
+    { name: "Zacian (Crowned Sword)", cp: 5696, move: "<b>Snarl</b> + <b>Play Rough</b> / Behemoth Blade" },
+  ]},
+];
+renderGrid('grid-pve', dataPVE, true);
+renderGrid('grid-gl', dataGL, false);
+renderGrid('grid-ul', dataUL, false);
+renderGrid('grid-ml', dataML, true);
+// ---------- Overall (aggregated across all 3 tabs) ----------
+const dataOverall = [{"name": "Tinkaton", "points": 19, "apps": [{"tab": "Great League 1500", "type": "Steel", "rank": 1}, {"tab": "Great League 1500", "type": "Fairy", "rank": 2}, {"tab": "Ultra League 2500", "type": "Steel", "rank": 1}, {"tab": "Ultra League 2500", "type": "Fairy", "rank": 1}]}, {"name": "Cradily", "points": 18, "apps": [{"tab": "Great League 1500", "type": "Grass", "rank": 2}, {"tab": "Great League 1500", "type": "Rock", "rank": 1}, {"tab": "Ultra League 2500", "type": "Grass", "rank": 2}, {"tab": "Ultra League 2500", "type": "Rock", "rank": 1}]}, {"name": "Jellicent", "points": 17, "apps": [{"tab": "Great League 1500", "type": "Water", "rank": 3}, {"tab": "Great League 1500", "type": "Ghost", "rank": 2}, {"tab": "Ultra League 2500", "type": "Water", "rank": 1}, {"tab": "Ultra League 2500", "type": "Ghost", "rank": 1}]}, {"name": "Forretress", "points": 16, "apps": [{"tab": "Great League 1500", "type": "Bug", "rank": 1}, {"tab": "Great League 1500", "type": "Steel", "rank": 3}, {"tab": "Ultra League 2500", "type": "Bug", "rank": 1}, {"tab": "Ultra League 2500", "type": "Steel", "rank": 3}]}, {"name": "Excadrill", "points": 15, "apps": [{"tab": "PvE", "type": "Ground", "rank": 4}, {"tab": "PvE", "type": "Steel", "rank": 4}, {"tab": "Ultra League 2500", "type": "Ground", "rank": 4}, {"tab": "Ultra League 2500", "type": "Steel", "rank": 4}, {"tab": "Master League 10000", "type": "Ground", "rank": 3}, {"tab": "Master League 10000", "type": "Steel", "rank": 2}]}, {"name": "Garchomp", "points": 15, "apps": [{"tab": "PvE", "type": "Ground", "rank": 2}, {"tab": "PvE", "type": "Dragon", "rank": 5}, {"tab": "Ultra League 2500", "type": "Ground", "rank": 5}, {"tab": "Ultra League 2500", "type": "Dragon", "rank": 4}, {"tab": "Master League 10000", "type": "Ground", "rank": 2}, {"tab": "Master League 10000", "type": "Dragon", "rank": 3}]}, {"name": "Metagross", "points": 15, "apps": [{"tab": "PvE", "type": "Psychic", "rank": 4}, {"tab": "PvE", "type": "Steel", "rank": 5}, {"tab": "Ultra League 2500", "type": "Psychic", "rank": 4}, {"tab": "Ultra League 2500", "type": "Steel", "rank": 5}, {"tab": "Master League 10000", "type": "Psychic", "rank": 2}, {"tab": "Master League 10000", "type": "Steel", "rank": 1}]}, {"name": "Nihilego", "points": 14, "apps": [{"tab": "PvE", "type": "Poison", "rank": 4}, {"tab": "PvE", "type": "Rock", "rank": 5}, {"tab": "Ultra League 2500", "type": "Poison", "rank": 4}, {"tab": "Master League 10000", "type": "Poison", "rank": 2}, {"tab": "Master League 10000", "type": "Rock", "rank": 1}]}, {"name": "Swampert", "points": 14, "apps": [{"tab": "PvE", "type": "Ground", "rank": 5}, {"tab": "Ultra League 2500", "type": "Ground", "rank": 2}, {"tab": "Master League 10000", "type": "Water", "rank": 2}, {"tab": "Master League 10000", "type": "Ground", "rank": 1}]}, {"name": "Togekiss", "points": 14, "apps": [{"tab": "PvE", "type": "Flying", "rank": 5}, {"tab": "PvE", "type": "Fairy", "rank": 4}, {"tab": "Ultra League 2500", "type": "Flying", "rank": 3}, {"tab": "Master League 10000", "type": "Flying", "rank": 3}, {"tab": "Master League 10000", "type": "Fairy", "rank": 1}]}, {"name": "Reshiram", "points": 13, "apps": [{"tab": "PvE", "type": "Fire", "rank": 3}, {"tab": "Master League 10000", "type": "Fire", "rank": 1}, {"tab": "Master League 10000", "type": "Dragon", "rank": 1}]}, {"name": "Roserade", "points": 13, "apps": [{"tab": "PvE", "type": "Poison", "rank": 2}, {"tab": "Master League 10000", "type": "Grass", "rank": 2}, {"tab": "Master League 10000", "type": "Poison", "rank": 1}]}, {"name": "Virizion", "points": 13, "apps": [{"tab": "Ultra League 2500", "type": "Grass", "rank": 1}, {"tab": "Ultra League 2500", "type": "Fighting", "rank": 1}, {"tab": "Master League 10000", "type": "Grass", "rank": 5}, {"tab": "Master League 10000", "type": "Fighting", "rank": 4}]}, {"name": "Weavile", "points": 13, "apps": [{"tab": "PvE", "type": "Dark", "rank": 4}, {"tab": "Ultra League 2500", "type": "Ice", "rank": 4}, {"tab": "Ultra League 2500", "type": "Dark", "rank": 4}, {"tab": "Master League 10000", "type": "Ice", "rank": 2}, {"tab": "Master League 10000", "type": "Dark", "rank": 3}]}, {"name": "Yveltal", "points": 13, "apps": [{"tab": "PvE", "type": "Dark", "rank": 2}, {"tab": "Master League 10000", "type": "Flying", "rank": 2}, {"tab": "Master League 10000", "type": "Dark", "rank": 1}]}, {"name": "Corviknight", "points": 12, "apps": [{"tab": "Great League 1500", "type": "Flying", "rank": 3}, {"tab": "Ultra League 2500", "type": "Flying", "rank": 1}, {"tab": "Ultra League 2500", "type": "Steel", "rank": 2}]}, {"name": "Crustle", "points": 12, "apps": [{"tab": "Great League 1500", "type": "Bug", "rank": 3}, {"tab": "Great League 1500", "type": "Rock", "rank": 3}, {"tab": "Ultra League 2500", "type": "Bug", "rank": 3}, {"tab": "Ultra League 2500", "type": "Rock", "rank": 3}]}, {"name": "Kingdra", "points": 12, "apps": [{"tab": "Great League 1500", "type": "Dragon", "rank": 2}, {"tab": "Ultra League 2500", "type": "Water", "rank": 3}, {"tab": "Ultra League 2500", "type": "Dragon", "rank": 2}, {"tab": "Master League 10000", "type": "Water", "rank": 5}]}, {"name": "Malamar", "points": 12, "apps": [{"tab": "Great League 1500", "type": "Psychic", "rank": 3}, {"tab": "Ultra League 2500", "type": "Psychic", "rank": 1}, {"tab": "Ultra League 2500", "type": "Dark", "rank": 2}]}, {"name": "Zarude", "points": 12, "apps": [{"tab": "PvE", "type": "Grass", "rank": 4}, {"tab": "PvE", "type": "Dark", "rank": 5}, {"tab": "Master League 10000", "type": "Grass", "rank": 1}, {"tab": "Master League 10000", "type": "Dark", "rank": 2}]}, {"name": "Zekrom", "points": 12, "apps": [{"tab": "PvE", "type": "Electric", "rank": 3}, {"tab": "Master League 10000", "type": "Electric", "rank": 1}, {"tab": "Master League 10000", "type": "Dragon", "rank": 2}]}, {"name": "Chandelure", "points": 11, "apps": [{"tab": "PvE", "type": "Ghost", "rank": 4}, {"tab": "Ultra League 2500", "type": "Fire", "rank": 4}, {"tab": "Ultra League 2500", "type": "Ghost", "rank": 4}, {"tab": "Master League 10000", "type": "Fire", "rank": 5}, {"tab": "Master League 10000", "type": "Ghost", "rank": 2}]}, {"name": "Empoleon", "points": 11, "apps": [{"tab": "Great League 1500", "type": "Water", "rank": 1}, {"tab": "Great League 1500", "type": "Steel", "rank": 2}, {"tab": "Ultra League 2500", "type": "Water", "rank": 4}]}, {"name": "Ho-Oh", "points": 11, "apps": [{"tab": "PvE", "type": "Flying", "rank": 4}, {"tab": "Master League 10000", "type": "Fire", "rank": 2}, {"tab": "Master League 10000", "type": "Flying", "rank": 1}]}, {"name": "White Kyurem", "points": 11, "apps": [{"tab": "PvE", "type": "Ice", "rank": 1}, {"tab": "PvE", "type": "Dragon", "rank": 3}, {"tab": "Master League 10000", "type": "Ice", "rank": 4}, {"tab": "Master League 10000", "type": "Dragon", "rank": 5}]}, {"name": "Altaria", "points": 10, "apps": [{"tab": "Great League 1500", "type": "Flying", "rank": 1}, {"tab": "Great League 1500", "type": "Dragon", "rank": 1}]}, {"name": "Lickilicky", "points": 10, "apps": [{"tab": "Great League 1500", "type": "Normal", "rank": 1}, {"tab": "Ultra League 2500", "type": "Normal", "rank": 1}]}, {"name": "Medicham", "points": 10, "apps": [{"tab": "Great League 1500", "type": "Fighting", "rank": 1}, {"tab": "Great League 1500", "type": "Psychic", "rank": 1}]}, {"name": "Mega Rayquaza", "points": 10, "apps": [{"tab": "PvE", "type": "Flying", "rank": 1}, {"tab": "PvE", "type": "Dragon", "rank": 1}]}, {"name": "Mimikyu (Busted)", "points": 10, "apps": [{"tab": "Great League 1500", "type": "Ghost", "rank": 1}, {"tab": "Great League 1500", "type": "Fairy", "rank": 1}]}, {"name": "Ninetales", "points": 10, "apps": [{"tab": "Great League 1500", "type": "Fire", "rank": 1}, {"tab": "Ultra League 2500", "type": "Fire", "rank": 1}]}, {"name": "Rhyperior", "points": 10, "apps": [{"tab": "PvE", "type": "Ground", "rank": 3}, {"tab": "Ultra League 2500", "type": "Rock", "rank": 4}, {"tab": "Master League 10000", "type": "Ground", "rank": 5}, {"tab": "Master League 10000", "type": "Rock", "rank": 2}]}, {"name": "Zygarde (Complete)", "points": 10, "apps": [{"tab": "Ultra League 2500", "type": "Ground", "rank": 1}, {"tab": "Ultra League 2500", "type": "Dragon", "rank": 1}]}, {"name": "Charjabug", "points": 9, "apps": [{"tab": "Great League 1500", "type": "Electric", "rank": 1}, {"tab": "Great League 1500", "type": "Bug", "rank": 2}]}, {"name": "Clodsire", "points": 9, "apps": [{"tab": "Great League 1500", "type": "Poison", "rank": 1}, {"tab": "Great League 1500", "type": "Ground", "rank": 2}]}, {"name": "Drapion", "points": 9, "apps": [{"tab": "Great League 1500", "type": "Poison", "rank": 2}, {"tab": "Ultra League 2500", "type": "Poison", "rank": 2}, {"tab": "Master League 10000", "type": "Poison", "rank": 5}]}, {"name": "Genesect", "points": 9, "apps": [{"tab": "PvE", "type": "Bug", "rank": 2}, {"tab": "Master League 10000", "type": "Bug", "rank": 1}]}, {"name": "Hydreigon", "points": 9, "apps": [{"tab": "PvE", "type": "Dark", "rank": 1}, {"tab": "Ultra League 2500", "type": "Dark", "rank": 3}, {"tab": "Master League 10000", "type": "Dark", "rank": 5}]}, {"name": "Jumpluff", "points": 9, "apps": [{"tab": "Great League 1500", "type": "Grass", "rank": 1}, {"tab": "Great League 1500", "type": "Flying", "rank": 2}]}, {"name": "Kyurem", "points": 9, "apps": [{"tab": "PvE", "type": "Ice", "rank": 4}, {"tab": "PvE", "type": "Dragon", "rank": 4}, {"tab": "Master League 10000", "type": "Ice", "rank": 1}]}, {"name": "Lapras", "points": 9, "apps": [{"tab": "Great League 1500", "type": "Ice", "rank": 1}, {"tab": "Ultra League 2500", "type": "Ice", "rank": 2}]}, {"name": "Lucario", "points": 9, "apps": [{"tab": "Great League 1500", "type": "Fighting", "rank": 3}, {"tab": "Master League 10000", "type": "Fighting", "rank": 3}, {"tab": "Master League 10000", "type": "Steel", "rank": 3}]}, {"name": "Machamp", "points": 9, "apps": [{"tab": "PvE", "type": "Fighting", "rank": 4}, {"tab": "Ultra League 2500", "type": "Fighting", "rank": 4}, {"tab": "Master League 10000", "type": "Fighting", "rank": 1}]}, {"name": "Mewtwo", "points": 9, "apps": [{"tab": "PvE", "type": "Psychic", "rank": 2}, {"tab": "Master League 10000", "type": "Psychic", "rank": 1}]}, {"name": "Moltres (Galarian)", "points": 9, "apps": [{"tab": "Ultra League 2500", "type": "Flying", "rank": 2}, {"tab": "Ultra League 2500", "type": "Dark", "rank": 1}]}, {"name": "Quagsire", "points": 9, "apps": [{"tab": "Great League 1500", "type": "Water", "rank": 2}, {"tab": "Great League 1500", "type": "Ground", "rank": 1}]}, {"name": "Raikou", "points": 9, "apps": [{"tab": "PvE", "type": "Electric", "rank": 4}, {"tab": "Ultra League 2500", "type": "Electric", "rank": 2}, {"tab": "Master League 10000", "type": "Electric", "rank": 3}]}, {"name": "Xerneas", "points": 9, "apps": [{"tab": "PvE", "type": "Fairy", "rank": 2}, {"tab": "Ultra League 2500", "type": "Fairy", "rank": 5}, {"tab": "Master League 10000", "type": "Fairy", "rank": 2}]}, {"name": "Feraligatr", "points": 8, "apps": [{"tab": "PvE", "type": "Water", "rank": 5}, {"tab": "Ultra League 2500", "type": "Water", "rank": 2}, {"tab": "Master League 10000", "type": "Water", "rank": 3}]}, {"name": "Giratina (Origin)", "points": 8, "apps": [{"tab": "PvE", "type": "Ghost", "rank": 3}, {"tab": "Master League 10000", "type": "Ghost", "rank": 1}]}, {"name": "Guzzlord", "points": 8, "apps": [{"tab": "Great League 1500", "type": "Dragon", "rank": 3}, {"tab": "Great League 1500", "type": "Dark", "rank": 1}]}, {"name": "Mega Beedrill", "points": 8, "apps": [{"tab": "PvE", "type": "Poison", "rank": 1}, {"tab": "PvE", "type": "Bug", "rank": 3}]}, {"name": "Mega Gengar", "points": 8, "apps": [{"tab": "PvE", "type": "Poison", "rank": 3}, {"tab": "PvE", "type": "Ghost", "rank": 1}]}, {"name": "Ninetales (Alolan)", "points": 8, "apps": [{"tab": "Ultra League 2500", "type": "Ice", "rank": 1}, {"tab": "Ultra League 2500", "type": "Fairy", "rank": 3}]}, {"name": "Oranguru", "points": 8, "apps": [{"tab": "Ultra League 2500", "type": "Normal", "rank": 2}, {"tab": "Ultra League 2500", "type": "Psychic", "rank": 2}]}, {"name": "Snorlax", "points": 8, "apps": [{"tab": "Great League 1500", "type": "Normal", "rank": 5}, {"tab": "Ultra League 2500", "type": "Normal", "rank": 4}, {"tab": "Master League 10000", "type": "Normal", "rank": 1}]}, {"name": "Escavalier", "points": 7, "apps": [{"tab": "Great League 1500", "type": "Bug", "rank": 4}, {"tab": "Ultra League 2500", "type": "Bug", "rank": 4}, {"tab": "Master League 10000", "type": "Bug", "rank": 5}, {"tab": "Master League 10000", "type": "Steel", "rank": 4}]}, {"name": "Giratina (Altered)", "points": 7, "apps": [{"tab": "Ultra League 2500", "type": "Ghost", "rank": 3}, {"tab": "Ultra League 2500", "type": "Dragon", "rank": 3}, {"tab": "Master League 10000", "type": "Ghost", "rank": 5}]}, {"name": "Granbull", "points": 7, "apps": [{"tab": "PvE", "type": "Fairy", "rank": 5}, {"tab": "Great League 1500", "type": "Fairy", "rank": 5}, {"tab": "Ultra League 2500", "type": "Fairy", "rank": 4}, {"tab": "Master League 10000", "type": "Fairy", "rank": 3}]}, {"name": "Kyogre", "points": 7, "apps": [{"tab": "PvE", "type": "Water", "rank": 4}, {"tab": "Master League 10000", "type": "Water", "rank": 1}]}, {"name": "Mega Lucario", "points": 7, "apps": [{"tab": "PvE", "type": "Fighting", "rank": 2}, {"tab": "PvE", "type": "Steel", "rank": 3}]}, {"name": "Talonflame", "points": 7, "apps": [{"tab": "Great League 1500", "type": "Fire", "rank": 2}, {"tab": "Ultra League 2500", "type": "Fire", "rank": 3}]}, {"name": "Turtonator", "points": 7, "apps": [{"tab": "Great League 1500", "type": "Fire", "rank": 3}, {"tab": "Ultra League 2500", "type": "Fire", "rank": 2}]}, {"name": "Walrein", "points": 7, "apps": [{"tab": "PvE", "type": "Ice", "rank": 5}, {"tab": "Ultra League 2500", "type": "Ice", "rank": 3}, {"tab": "Master League 10000", "type": "Ice", "rank": 3}]}, {"name": "Dusknoir", "points": 6, "apps": [{"tab": "Ultra League 2500", "type": "Ghost", "rank": 2}, {"tab": "Master League 10000", "type": "Ghost", "rank": 4}]}, {"name": "Florges", "points": 6, "apps": [{"tab": "Ultra League 2500", "type": "Fairy", "rank": 2}, {"tab": "Master League 10000", "type": "Fairy", "rank": 4}]}, {"name": "Golisopod", "points": 6, "apps": [{"tab": "Ultra League 2500", "type": "Bug", "rank": 2}, {"tab": "Master League 10000", "type": "Bug", "rank": 4}]}, {"name": "Lugia", "points": 6, "apps": [{"tab": "PvE", "type": "Psychic", "rank": 5}, {"tab": "Master League 10000", "type": "Flying", "rank": 4}, {"tab": "Master League 10000", "type": "Psychic", "rank": 3}]}, {"name": "Scizor", "points": 6, "apps": [{"tab": "PvE", "type": "Bug", "rank": 4}, {"tab": "Master League 10000", "type": "Bug", "rank": 2}]}, {"name": "Terrakion", "points": 6, "apps": [{"tab": "PvE", "type": "Rock", "rank": 4}, {"tab": "Master League 10000", "type": "Fighting", "rank": 5}, {"tab": "Master League 10000", "type": "Rock", "rank": 3}]}, {"name": "Xurkitree", "points": 6, "apps": [{"tab": "PvE", "type": "Electric", "rank": 2}, {"tab": "Master League 10000", "type": "Electric", "rank": 4}]}, {"name": "Bastiodon", "points": 5, "apps": [{"tab": "Great League 1500", "type": "Rock", "rank": 2}, {"tab": "Great League 1500", "type": "Steel", "rank": 5}]}, {"name": "Bellibolt", "points": 5, "apps": [{"tab": "Ultra League 2500", "type": "Electric", "rank": 1}]}, {"name": "Conkeldurr", "points": 5, "apps": [{"tab": "PvE", "type": "Fighting", "rank": 5}, {"tab": "Master League 10000", "type": "Fighting", "rank": 2}]}, {"name": "Dialga (Origin)", "points": 5, "apps": [{"tab": "PvE", "type": "Steel", "rank": 2}, {"tab": "Master League 10000", "type": "Steel", "rank": 5}]}, {"name": "Magnezone", "points": 5, "apps": [{"tab": "PvE", "type": "Electric", "rank": 5}, {"tab": "Master League 10000", "type": "Electric", "rank": 2}]}, {"name": "Mega Blaziken", "points": 5, "apps": [{"tab": "PvE", "type": "Fire", "rank": 1}]}, {"name": "Mega Diancie", "points": 5, "apps": [{"tab": "PvE", "type": "Rock", "rank": 1}]}, {"name": "Mega Gardevoir", "points": 5, "apps": [{"tab": "PvE", "type": "Fairy", "rank": 1}]}, {"name": "Mega Lopunny", "points": 5, "apps": [{"tab": "PvE", "type": "Normal", "rank": 1}]}, {"name": "Mega Manectric", "points": 5, "apps": [{"tab": "PvE", "type": "Electric", "rank": 1}]}, {"name": "Mega Metagross", "points": 5, "apps": [{"tab": "PvE", "type": "Steel", "rank": 1}]}, {"name": "Mega Mewtwo X", "points": 5, "apps": [{"tab": "PvE", "type": "Fighting", "rank": 1}]}, {"name": "Mega Mewtwo Y", "points": 5, "apps": [{"tab": "PvE", "type": "Psychic", "rank": 1}]}, {"name": "Mega Pinsir", "points": 5, "apps": [{"tab": "PvE", "type": "Bug", "rank": 1}]}, {"name": "Mega Sceptile", "points": 5, "apps": [{"tab": "PvE", "type": "Grass", "rank": 1}]}, {"name": "Muk (Alolan)", "points": 5, "apps": [{"tab": "Great League 1500", "type": "Poison", "rank": 4}, {"tab": "Ultra League 2500", "type": "Poison", "rank": 5}, {"tab": "Master League 10000", "type": "Poison", "rank": 4}]}, {"name": "Poliwrath", "points": 5, "apps": [{"tab": "Great League 1500", "type": "Fighting", "rank": 2}, {"tab": "Ultra League 2500", "type": "Fighting", "rank": 5}]}, {"name": "Primal Groudon", "points": 5, "apps": [{"tab": "PvE", "type": "Ground", "rank": 1}]}, {"name": "Primal Kyogre", "points": 5, "apps": [{"tab": "PvE", "type": "Water", "rank": 1}]}, {"name": "Regigigas", "points": 5, "apps": [{"tab": "PvE", "type": "Normal", "rank": 5}, {"tab": "Master League 10000", "type": "Normal", "rank": 2}]}, {"name": "Skarmory", "points": 5, "apps": [{"tab": "Great League 1500", "type": "Flying", "rank": 5}, {"tab": "Great League 1500", "type": "Steel", "rank": 4}, {"tab": "Ultra League 2500", "type": "Flying", "rank": 4}]}, {"name": "Tentacruel", "points": 5, "apps": [{"tab": "Ultra League 2500", "type": "Poison", "rank": 1}]}, {"name": "Absol", "points": 4, "apps": [{"tab": "Great League 1500", "type": "Dark", "rank": 5}, {"tab": "Ultra League 2500", "type": "Dark", "rank": 5}, {"tab": "Master League 10000", "type": "Dark", "rank": 4}]}, {"name": "Annihilape", "points": 4, "apps": [{"tab": "Ultra League 2500", "type": "Fighting", "rank": 2}]}, {"name": "Aurorus", "points": 4, "apps": [{"tab": "Ultra League 2500", "type": "Rock", "rank": 2}]}, {"name": "Black Kyurem", "points": 4, "apps": [{"tab": "PvE", "type": "Dragon", "rank": 2}]}, {"name": "Charizard", "points": 4, "apps": [{"tab": "Great League 1500", "type": "Fire", "rank": 5}, {"tab": "Ultra League 2500", "type": "Fire", "rank": 5}, {"tab": "Master League 10000", "type": "Fire", "rank": 4}]}, {"name": "Cresselia", "points": 4, "apps": [{"tab": "Ultra League 2500", "type": "Psychic", "rank": 3}, {"tab": "Master League 10000", "type": "Psychic", "rank": 5}]}, {"name": "Entei", "points": 4, "apps": [{"tab": "PvE", "type": "Fire", "rank": 5}, {"tab": "Master League 10000", "type": "Fire", "rank": 3}]}, {"name": "Fearow", "points": 4, "apps": [{"tab": "Great League 1500", "type": "Normal", "rank": 2}]}, {"name": "Glaceon", "points": 4, "apps": [{"tab": "PvE", "type": "Ice", "rank": 3}, {"tab": "Master League 10000", "type": "Ice", "rank": 5}]}, {"name": "Golurk", "points": 4, "apps": [{"tab": "PvE", "type": "Ghost", "rank": 5}, {"tab": "Master League 10000", "type": "Ghost", "rank": 3}]}, {"name": "Grumpig", "points": 4, "apps": [{"tab": "Great League 1500", "type": "Psychic", "rank": 2}]}, {"name": "Mega Blastoise", "points": 4, "apps": [{"tab": "PvE", "type": "Water", "rank": 2}]}, {"name": "Mega Charizard Y", "points": 4, "apps": [{"tab": "PvE", "type": "Fire", "rank": 2}]}, {"name": "Mega Glalie", "points": 4, "apps": [{"tab": "PvE", "type": "Ice", "rank": 2}]}, {"name": "Mega Tyranitar", "points": 4, "apps": [{"tab": "PvE", "type": "Rock", "rank": 2}]}, {"name": "Mega Venusaur", "points": 4, "apps": [{"tab": "PvE", "type": "Grass", "rank": 2}]}, {"name": "Palkia (Origin)", "points": 4, "apps": [{"tab": "Master League 10000", "type": "Water", "rank": 4}, {"tab": "Master League 10000", "type": "Dragon", "rank": 4}]}, {"name": "Sableye", "points": 4, "apps": [{"tab": "Great League 1500", "type": "Dark", "rank": 2}]}, {"name": "Sealeo", "points": 4, "apps": [{"tab": "Great League 1500", "type": "Ice", "rank": 2}]}, {"name": "Shadow Chandelure", "points": 4, "apps": [{"tab": "PvE", "type": "Ghost", "rank": 2}]}, {"name": "Shadow Moltres", "points": 4, "apps": [{"tab": "PvE", "type": "Flying", "rank": 2}]}, {"name": "Shadow Ursaluna", "points": 4, "apps": [{"tab": "PvE", "type": "Normal", "rank": 2}]}, {"name": "Stunfisk", "points": 4, "apps": [{"tab": "Great League 1500", "type": "Electric", "rank": 2}]}, {"name": "Toxicroak", "points": 4, "apps": [{"tab": "PvE", "type": "Poison", "rank": 5}, {"tab": "Master League 10000", "type": "Poison", "rank": 3}]}, {"name": "Trevenant", "points": 4, "apps": [{"tab": "Great League 1500", "type": "Grass", "rank": 5}, {"tab": "Great League 1500", "type": "Ghost", "rank": 4}, {"tab": "Ultra League 2500", "type": "Ghost", "rank": 5}]}, {"name": "Volcarona", "points": 4, "apps": [{"tab": "PvE", "type": "Bug", "rank": 5}, {"tab": "Master League 10000", "type": "Bug", "rank": 3}]}, {"name": "Zacian (Crowned Sword)", "points": 4, "apps": [{"tab": "PvE", "type": "Fairy", "rank": 3}, {"tab": "Master League 10000", "type": "Fairy", "rank": 5}]}, {"name": "Ampharos", "points": 3, "apps": [{"tab": "Ultra League 2500", "type": "Electric", "rank": 3}]}, {"name": "Avalugg", "points": 3, "apps": [{"tab": "Great League 1500", "type": "Ice", "rank": 4}, {"tab": "Ultra League 2500", "type": "Ice", "rank": 5}]}, {"name": "Azumarill", "points": 3, "apps": [{"tab": "Great League 1500", "type": "Fairy", "rank": 3}]}, {"name": "Blissey", "points": 3, "apps": [{"tab": "Master League 10000", "type": "Normal", "rank": 3}]}, {"name": "Bronzong", "points": 3, "apps": [{"tab": "Great League 1500", "type": "Psychic", "rank": 4}, {"tab": "Ultra League 2500", "type": "Psychic", "rank": 5}]}, {"name": "Cobalion", "points": 3, "apps": [{"tab": "Ultra League 2500", "type": "Fighting", "rank": 3}]}, {"name": "Corsola (Galarian)", "points": 3, "apps": [{"tab": "Great League 1500", "type": "Ghost", "rank": 3}]}, {"name": "Dewgong", "points": 3, "apps": [{"tab": "Great League 1500", "type": "Ice", "rank": 3}]}, {"name": "Diggersby", "points": 3, "apps": [{"tab": "Great League 1500", "type": "Ground", "rank": 3}]}, {"name": "Flygon", "points": 3, "apps": [{"tab": "Great League 1500", "type": "Dragon", "rank": 4}, {"tab": "Ultra League 2500", "type": "Dragon", "rank": 5}]}, {"name": "Furret", "points": 3, "apps": [{"tab": "Great League 1500", "type": "Normal", "rank": 3}]}, {"name": "Golem", "points": 3, "apps": [{"tab": "Great League 1500", "type": "Ground", "rank": 5}, {"tab": "Great League 1500", "type": "Rock", "rank": 4}]}, {"name": "Gourgeist", "points": 3, "apps": [{"tab": "Great League 1500", "type": "Grass", "rank": 3}]}, {"name": "Hippowdon", "points": 3, "apps": [{"tab": "Ultra League 2500", "type": "Ground", "rank": 3}]}, {"name": "Kartana", "points": 3, "apps": [{"tab": "PvE", "type": "Grass", "rank": 5}, {"tab": "Master League 10000", "type": "Grass", "rank": 4}]}, {"name": "Ludicolo", "points": 3, "apps": [{"tab": "Ultra League 2500", "type": "Grass", "rank": 3}]}, {"name": "Mega Alakazam", "points": 3, "apps": [{"tab": "PvE", "type": "Psychic", "rank": 3}]}, {"name": "Mega Gyarados", "points": 3, "apps": [{"tab": "PvE", "type": "Dark", "rank": 3}]}, {"name": "Mega Pidgeot", "points": 3, "apps": [{"tab": "PvE", "type": "Flying", "rank": 3}]}, {"name": "Morpeko (Hangry)", "points": 3, "apps": [{"tab": "Great League 1500", "type": "Electric", "rank": 3}]}, {"name": "Nidoqueen", "points": 3, "apps": [{"tab": "Great League 1500", "type": "Poison", "rank": 3}]}, {"name": "Noctowl", "points": 3, "apps": [{"tab": "Great League 1500", "type": "Flying", "rank": 4}, {"tab": "Ultra League 2500", "type": "Flying", "rank": 5}]}, {"name": "Origin Palkia", "points": 3, "apps": [{"tab": "PvE", "type": "Water", "rank": 3}]}, {"name": "Piloswine", "points": 3, "apps": [{"tab": "Great League 1500", "type": "Ice", "rank": 5}, {"tab": "Great League 1500", "type": "Ground", "rank": 4}]}, {"name": "Politoed", "points": 3, "apps": [{"tab": "Great League 1500", "type": "Water", "rank": 4}, {"tab": "Ultra League 2500", "type": "Water", "rank": 5}]}, {"name": "Rampardos", "points": 3, "apps": [{"tab": "PvE", "type": "Rock", "rank": 3}]}, {"name": "Rillaboom", "points": 3, "apps": [{"tab": "PvE", "type": "Grass", "rank": 3}]}, {"name": "Shadow Machamp", "points": 3, "apps": [{"tab": "PvE", "type": "Fighting", "rank": 3}]}, {"name": "Skuntank", "points": 3, "apps": [{"tab": "Great League 1500", "type": "Poison", "rank": 5}, {"tab": "Great League 1500", "type": "Dark", "rank": 4}]}, {"name": "Slaking", "points": 3, "apps": [{"tab": "PvE", "type": "Normal", "rank": 3}]}, {"name": "Tangrowth", "points": 3, "apps": [{"tab": "Master League 10000", "type": "Grass", "rank": 3}]}, {"name": "Toucannon", "points": 3, "apps": [{"tab": "Ultra League 2500", "type": "Normal", "rank": 3}]}, {"name": "Umbreon", "points": 3, "apps": [{"tab": "Great League 1500", "type": "Dark", "rank": 3}]}, {"name": "Weezing (Galarian)", "points": 3, "apps": [{"tab": "Ultra League 2500", "type": "Poison", "rank": 3}]}, {"name": "Aggron", "points": 2, "apps": [{"tab": "Master League 10000", "type": "Rock", "rank": 4}]}, {"name": "Araquanid", "points": 2, "apps": [{"tab": "Great League 1500", "type": "Bug", "rank": 5}, {"tab": "Ultra League 2500", "type": "Bug", "rank": 5}]}, {"name": "Arcanine", "points": 2, "apps": [{"tab": "Great League 1500", "type": "Fire", "rank": 4}]}, {"name": "Dubwool", "points": 2, "apps": [{"tab": "Great League 1500", "type": "Normal", "rank": 4}]}, {"name": "Electrode", "points": 2, "apps": [{"tab": "Great League 1500", "type": "Electric", "rank": 4}]}, {"name": "Landorus (Therian)", "points": 2, "apps": [{"tab": "Master League 10000", "type": "Ground", "rank": 4}]}, {"name": "Latios", "points": 2, "apps": [{"tab": "Master League 10000", "type": "Psychic", "rank": 4}]}, {"name": "Machoke", "points": 2, "apps": [{"tab": "Great League 1500", "type": "Fighting", "rank": 4}]}, {"name": "Mega Kangaskhan", "points": 2, "apps": [{"tab": "PvE", "type": "Normal", "rank": 4}]}, {"name": "Moltres", "points": 2, "apps": [{"tab": "PvE", "type": "Fire", "rank": 4}]}, {"name": "Porygon-Z", "points": 2, "apps": [{"tab": "Master League 10000", "type": "Normal", "rank": 4}]}, {"name": "Serperior", "points": 2, "apps": [{"tab": "Great League 1500", "type": "Grass", "rank": 4}]}, {"name": "Shuckle", "points": 2, "apps": [{"tab": "Great League 1500", "type": "Rock", "rank": 5}, {"tab": "Ultra League 2500", "type": "Rock", "rank": 5}]}, {"name": "Torterra", "points": 2, "apps": [{"tab": "Ultra League 2500", "type": "Grass", "rank": 4}]}, {"name": "Wigglytuff", "points": 2, "apps": [{"tab": "Great League 1500", "type": "Fairy", "rank": 4}]}, {"name": "Zapdos", "points": 2, "apps": [{"tab": "Ultra League 2500", "type": "Electric", "rank": 4}]}, {"name": "Alomomola", "points": 1, "apps": [{"tab": "Great League 1500", "type": "Water", "rank": 5}]}, {"name": "Claydol", "points": 1, "apps": [{"tab": "Great League 1500", "type": "Psychic", "rank": 5}]}, {"name": "Electivire", "points": 1, "apps": [{"tab": "Ultra League 2500", "type": "Electric", "rank": 5}]}, {"name": "Hariyama", "points": 1, "apps": [{"tab": "Great League 1500", "type": "Fighting", "rank": 5}]}, {"name": "Meganium", "points": 1, "apps": [{"tab": "Ultra League 2500", "type": "Grass", "rank": 5}]}, {"name": "Noivern", "points": 1, "apps": [{"tab": "Great League 1500", "type": "Dragon", "rank": 5}]}, {"name": "Rayquaza", "points": 1, "apps": [{"tab": "Master League 10000", "type": "Flying", "rank": 5}]}, {"name": "Regirock", "points": 1, "apps": [{"tab": "Master League 10000", "type": "Rock", "rank": 5}]}, {"name": "Runerigus", "points": 1, "apps": [{"tab": "Great League 1500", "type": "Ghost", "rank": 5}]}, {"name": "Staraptor", "points": 1, "apps": [{"tab": "Ultra League 2500", "type": "Normal", "rank": 5}]}, {"name": "Thundurus (Therian)", "points": 1, "apps": [{"tab": "Master League 10000", "type": "Electric", "rank": 5}]}, {"name": "Ursaluna", "points": 1, "apps": [{"tab": "Master League 10000", "type": "Normal", "rank": 5}]}, {"name": "Vikavolt", "points": 1, "apps": [{"tab": "Great League 1500", "type": "Electric", "rank": 5}]}];
+const tabAbbrev = { "PvE": "Raids", "Great League 1500": "GL", "Ultra League 2500": "UL", "Master League 10000": "ML" };
+// Build a moveset/CP lookup so the Overall tab can show full detail on expand:
+// key = "<tab>|<type>|<name>" -> { move, cp }
+const moveLookup = {};
+function indexData(tabLabel, dataset, hasCP) {
+  dataset.forEach(d => {
+    d.picks.forEach(p => {
+      moveLookup[`${tabLabel}|${d.type}|${p.name}`] = { move: p.move, cp: hasCP ? p.cp : null };
+    });
+  });
+}
+indexData('PvE', dataPVE, true);
+indexData('Great League 1500', dataGL, false);
+indexData('Ultra League 2500', dataUL, false);
+indexData('Master League 10000', dataML, true);
+// Matching an Overall entry's plain name (no 🅼/🅢/form suffixes) back to the exact
+// picks-array name (which may carry those) for lookup purposes:
+function findPickName(tabLabel, type, plainName) {
+  const dataset = tabLabel === 'PvE' ? dataPVE : (tabLabel === 'Great League 1500' ? dataGL : (tabLabel === 'Ultra League 2500' ? dataUL : dataML));
+  const typeEntry = dataset.find(d => d.type === type);
+  if (!typeEntry) return plainName;
+  const found = typeEntry.picks.find(p => p.name.replace(/\s*(🅼|🅢)\s*/g, '').trim() === plainName);
+  return found ? found.name : plainName;
+}
+const ovContainer = document.getElementById('overall-list');
+const ovWrap = document.createElement('div');
+ovWrap.className = 'ov-list';
+dataOverall.forEach((mon, idx) => {
+  const row = document.createElement('div');
+  row.className = 'ov-row';
+  row.dataset.name = mon.name.replace(/[^\w\s()]/g, '').trim().toLowerCase();
+  row.dataset.points = mon.points;
+  row.dataset.tabs = mon.apps.map(a => a.tab).join(',');
+  const chips = mon.apps.map(a => `<span class="ov-chip">${tabAbbrev[a.tab]} ${a.type} <b>#${a.rank}</b></span>`).join('');
+  const detailLines = mon.apps.map(a => {
+    const pickName = findPickName(a.tab, a.type, mon.name);
+    const info = moveLookup[`${a.tab}|${a.type}|${pickName}`];
+    const cpPart = info && info.cp ? ` — <b>${info.cp.toLocaleString()} CP</b>` : '';
+    const movePart = info ? info.move : '';
+    return `<div>${tabAbbrev[a.tab]} · ${a.type} #${a.rank}${cpPart}<br>${movePart}</div>`;
+  }).join('');
+  row.innerHTML = `
+    <div class="ov-rank">${idx + 1}</div>
+    <div class="ov-pts">${mon.points}<span>PTS</span></div>
+    <div class="ov-main">
+      <div class="ov-name">${mon.name}</div>
+      <div class="ov-apps">${chips}</div>
+      <div class="ov-detail">${detailLines}</div>
+    </div>
+    <div class="ov-expand-hint">tap ▾</div>
+  `;
+  row.addEventListener('click', () => row.classList.toggle('expanded'));
+  ovWrap.appendChild(row);
+});
+ovContainer.appendChild(ovWrap);
+// ---------- Search (filters whichever tab is currently active) ----------
+const searchInput = document.getElementById('global-search');
+function applySearch() {
+  const q = searchInput.value.trim().toLowerCase();
+  const activeTab = document.querySelector('.tab-btn.active').dataset.tab;
+  if (activeTab === 'overall') {
+    document.querySelectorAll('#overall-list .ov-row').forEach(row => {
+      const match = !q || row.dataset.name.includes(q);
+      row.classList.toggle('hidden-item', !match);
+    });
+  } else {
+    const grid = document.getElementById('grid-' + activeTab);
+    grid.querySelectorAll('.card').forEach(card => {
+      const items = card.querySelectorAll('li');
+      let anyVisible = false;
+      items.forEach(li => {
+        const match = !q || li.dataset.name.includes(q);
+        li.classList.toggle('hidden-item', !match);
+        if (match) anyVisible = true;
+      });
+      card.classList.toggle('hidden-item', !anyVisible);
+    });
+  }
+}
+searchInput.addEventListener('input', applySearch);
+// ---------- PvE Shadow/Mega toggle ----------
+const pveToggle = document.getElementById('pve-shadow-mega-toggle');
+function applyPveToggle() {
+  const showSpecial = pveToggle.checked;
+  document.querySelectorAll('#grid-pve li[data-special-form="1"]').forEach(li => {
+    li.style.display = showSpecial ? '' : 'none';
+  });
+}
+pveToggle.addEventListener('change', applyPveToggle);
+// ---------- Overall filters: required tabs + min points ----------
+const activeReqTabs = new Set();
+document.querySelectorAll('.filter-chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    const req = chip.dataset.req;
+    if (activeReqTabs.has(req)) {
+      activeReqTabs.delete(req);
+      chip.classList.remove('active');
+    } else {
+      activeReqTabs.add(req);
+      chip.classList.add('active');
+    }
+    applyOverallFilters();
+  });
+});
+const minPtsInput = document.getElementById('ov-min-pts');
+minPtsInput.addEventListener('input', applyOverallFilters);
+function applyOverallFilters() {
+  const minPts = parseInt(minPtsInput.value, 10) || 0;
+  document.querySelectorAll('#overall-list .ov-row').forEach(row => {
+    const pts = parseInt(row.dataset.points, 10);
+    const rowTabs = row.dataset.tabs.split(',');
+    const meetsReq = [...activeReqTabs].every(t => rowTabs.includes(t));
+    const meetsPts = pts >= minPts;
+    row.classList.toggle('filtered-out', !(meetsReq && meetsPts));
+    row.style.display = (meetsReq && meetsPts) ? '' : 'none';
+  });
+}
+// ---------- Tab switching ----------
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.legend').forEach(l => l.style.display = 'none');
+    btn.classList.add('active');
+    const tab = btn.dataset.tab;
+    document.getElementById('panel-' + tab).classList.add('active');
+    document.getElementById('legend-' + tab).style.display = 'block';
+    document.getElementById('pve-controls').style.display = (tab === 'pve') ? 'flex' : 'none';
+    applySearch();
+  });
+});
+// Initial state: hide PvE controls if not on PvE tab (it is, by default, so show them)
+document.getElementById('pve-controls').style.display = 'flex';
+</script>
+</body>
+</html>
